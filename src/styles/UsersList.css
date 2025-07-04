@@ -1,0 +1,128 @@
+.users-list-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.users-list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.add-user-button {
+  background-color: #007bff;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.add-user-button:hover {
+  background-color: #0056b3;
+}
+
+.no-users-container {
+  text-align: center;
+  padding: 60px 20px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  border: 2px dashed #dee2e6;
+}
+
+.no-users-title {
+  color: #6c757d;
+  margin-bottom: 10px;
+}
+
+.no-users-description {
+  color: #6c757d;
+  margin-bottom: 20px;
+}
+
+.add-first-user-button {
+  background-color: #28a745;
+  color: white;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.add-first-user-button:hover {
+  background-color: #1e7e34;
+}
+
+.users-grid {
+  display: grid;
+  gap: 15px;
+}
+
+.user-card {
+  background-color: white;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.user-card-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.user-details {
+  flex: 1;
+}
+
+.user-name {
+  margin: 0 0 10px 0;
+  color: #333;
+}
+
+.user-email {
+  margin: 0 0 8px 0;
+  color: #666;
+}
+
+.user-subscription {
+  margin: 0 0 8px 0;
+  color: #666;
+}
+
+.user-created {
+  margin: 0;
+  color: #888;
+  font-size: 14px;
+}
+
+.subscription-badge {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.subscription-badge.subscribed {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.subscription-badge.not-subscribed {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+.users-count {
+  margin-top: 30px;
+  text-align: center;
+  color: #6c757d;
+  font-size: 14px;
+} 

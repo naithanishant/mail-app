@@ -1,20 +1,21 @@
-
-import React from "react"
+import React from "react";
 import ReactDOM from "react-dom/client";
-import { BrowserRouter } from "react-router-dom";
+import "./index.css";
+import "@contentstack/venus-components/build/main.css";
 import App from "./App";
-import { LivePreviewProvider } from "./context/live-preview-context-provider";
 import reportWebVitals from "./reportWebVitals";
+import store from "./store/index";
+import { Provider } from "react-redux";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
 root.render(
-  <BrowserRouter>
-    <LivePreviewProvider>
+  <React.StrictMode>
+    <Provider store={store}>
       <App />
-    </LivePreviewProvider>
-  </BrowserRouter>,
+    </Provider>
+  </React.StrictMode>
 );
 
 // If you want to start measuring performance in your app, pass a function
