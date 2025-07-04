@@ -1,0 +1,651 @@
+.app {
+  .header {
+    display: flex;
+    padding: 32px 32px;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    height: 70px;
+    z-index: 50;
+    position: fixed;
+    background: #ffffff;
+  }
+
+  .logo-menu {
+    display: flex;
+    align-items: center;
+  }
+
+  .logo-menu img {
+    width: 300px;
+    height: 50px;
+  }
+
+  .nav {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 36px;
+  }
+
+  .nav a {
+    color: #241d32;
+    text-decoration: none;
+    font-family: Inter;
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 24px;
+  }
+
+  .nav a.active {
+    color: #3822aa;
+    text-decoration-line: underline;
+    font-weight: 600;
+    text-underline-offset: 6px;
+  }
+
+  .nav a:hover {
+    color: #3822aa;
+  }
+
+  .menu-toggle {
+    display: none;
+    cursor: pointer;
+  }
+
+  .menu-toggle .icon-bar {
+    width: 24px;
+    height: 3px;
+    background-color: black;
+    margin: 4px 0;
+  }
+
+  .page {
+    display: flex;
+    flex-direction: column;
+    padding-top: 72px;
+    width: 100%;
+    gap: 50px;
+    align-items: center;
+    justify-content: center;
+
+    & .portfolio-about {
+      display: flex;
+      justify-content: center;
+      height: 90%;
+      
+      & .portfolio-about-content {
+        font-style: italic;
+        max-width: 700px;
+        font-size: 24px;
+      }
+    }
+
+    & .exprience-card {
+      width: 850px;
+      border-radius: 16px;
+      border: 1px solid #241d32;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+
+      & .experience-date {
+        display: flex;
+        gap: 8px;
+      }
+
+      & .experience-description {
+        font-style: italic;
+        font-size: 20px;
+      }
+      
+      & a {
+        color: #241d32;
+        text-decoration: none;
+        font-size: 24px;
+        font-weight: 700;
+      }
+    }
+  }
+
+  .hero-section {
+    display: flex;
+    width: 100%;
+  }
+
+  .hero-banner {
+    width: 50%;
+  }
+
+  .hero-banner img {
+    width: 100%;
+    height: 95vh;
+    max-height: 95vh;
+    object-fit: cover;
+    box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.25);
+  }
+
+  .hero-content {
+    flex: 1;
+    width: 50%;
+    margin: 64px;
+    align-self: center;
+  }
+
+  .hero-content h1 {
+    color: #241d32;
+    font-family: "Cormorant Garamond";
+    font-size: 144px;
+    font-weight: 500;
+    line-height: 144px;
+    .italic {
+      font-style: italic;
+      font-weight: 100;
+    }
+  }
+
+  .hero-content p {
+    color: #241d32;
+    font-family: "Inter";
+    font-size: 24px;
+    font-style: normal;
+    font-weight: 300;
+    line-height: 32px;
+    margin-top: 5%;
+  }
+
+  .cta-button {
+    background-color: #3822aa;
+    color: #fbf8f4;
+    border-radius: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-family: "Cormorant Garamond";
+    font-size: 24px;
+    font-style: normal;
+    font-weight: 700;
+    width: 40%;
+    margin-top: 10%;
+  }
+
+  .cta-button:hover {
+    background-color: #241d32;
+  }
+
+  .menu-page {
+    background-color: #fbf8f4;
+    width: 100%;
+    padding-top: 72px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 48px;
+    align-self: stretch;
+    margin-bottom: 36px;
+  }
+
+  .categories {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    width: 100%;
+    padding: 18px; /* Optional: Add some padding around the container */
+    box-sizing: border-box;
+  }
+
+  .category {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 18px 0px;
+    width: 100%;
+  }
+
+  .category p {
+    flex: 1 1 calc(33.33% - 40px);
+    max-width: 200px;
+    min-width: 100px;
+    flex-grow: 1;
+    color: #241d32;
+    cursor: pointer;
+    font-family: Inter;
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 24px;
+    text-align: center;
+    opacity: 0.5;
+  }
+
+  .category p.active {
+    color: #3822aa;
+    text-decoration: underline;
+    text-underline-offset: 16px;
+    font-weight: 600;
+    opacity: 1;
+  }
+
+  .category p:hover {
+    color: #3822aa;
+    opacity: 0.8;
+  }
+
+  .category p.active:hover {
+    color: #3822aa;
+    text-decoration: underline;
+    text-underline-offset: 16px;
+    font-weight: 600;
+    opacity: 1;
+  }
+
+  .footer {
+    display: flex;
+    padding: 48px 80px 36px 48px;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px 32px;
+    align-self: stretch;
+    background: #222;
+    color: #fbf8f4;
+  }
+
+  .footer-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    align-self: stretch;
+    color: #fbf8f4;
+  }
+
+  .footer-link {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+    color: #fbf8f4;
+  }
+
+  .footer-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  .footer h1 {
+    color: #fbf8f4;
+    font-family: "Cormorant Garamond";
+    font-size: 24px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 32px;
+  }
+
+  .footer h2 {
+    color: #fbf8f4;
+    text-align: center;
+    font-family: Inter;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 24px;
+    opacity: 0.5;
+  }
+
+  .footer-nav a {
+    color: #fbf8f4;
+    text-decoration: none;
+    font-family: Inter;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 24px;
+  }
+
+  .footer-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+    color: #fbf8f4;
+  }
+
+  .footer-info img {
+    width: 300px;
+    height: 50px;
+  }
+
+  .footer-info p {
+    color: #fbf8f4;
+    width: 413px;
+    font-family: Inter;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 24px;
+  }
+
+  .footer-info h3 {
+    color: #fbf8f4;
+    font-family: "Cormorant Garamond";
+    font-size: 24px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 32px;
+  }
+
+  .menu-heading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    align-self: stretch;
+    color: #241d32;
+    text-align: center;
+
+    font-family: "Cormorant Garamond";
+    font-size: 80px;
+    font-weight: 500;
+    line-height: 90px;
+    text-align: center;
+    margin: 36px 0 0 0;
+  }
+
+  .menu-heading .line1 {
+    display: block;
+    align-self: stretch;
+  }
+
+  .menu-heading .line2 {
+    display: block;
+    color: #241d32;
+
+    font-family: "Cormorant Garamond";
+    font-size: 80px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 90px;
+
+    .italic {
+      color: #241d32;
+      font-family: "Cormorant Garamond";
+      font-size: 80px;
+      font-style: italic;
+      font-weight: 500;
+      line-height: 90px;
+    }
+  }
+
+  .card-section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 24px;
+    width: 100%;
+  }
+
+  .menu-card {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 36px;
+    width: 100%;
+  }
+
+  .menu-card-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-basis: calc(33.33% - 20px);
+    max-width: 400px;
+    min-width: 280px;
+    flex-grow: 1;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 4px 6px 8px rgba(0, 0, 0, 0.25);
+  }
+
+  .item-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    padding: 16px;
+    gap: 24px;
+    background: #fbf8f4;
+    border-radius: 0 0 16px 16px;
+  }
+
+  .item-content-text {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    width: 100%;
+  }
+
+  .price {
+    color: #241d32;
+    text-align: right;
+    font-family: "Inter";
+    font-size: 18px;
+    font-weight: 400;
+    line-height: 24px;
+  }
+
+  .item-content-text p {
+    color: #715cdd;
+    text-align: center;
+    font-family: "Cormorant Garamond";
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 24px;
+  }
+
+  .description {
+    color: #241d32;
+    text-align: center;
+    font-family: Inter, sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 24px;
+    flex: 1;
+    opacity: 0.7;
+  }
+
+  .body {
+    display: flex;
+    font-family: sans-serif;
+    min-height: calc(100vh - 70px);
+    background: #fbf8f4;
+    padding: 40px 20px;
+    justify-content: center;
+  }
+
+  .loading-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-basis: calc(33.33% - 20px);
+    max-width: 400px;
+    min-width: 280px;
+    height: 500px;
+    flex-grow: 1;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 4px 6px 8px rgba(0, 0, 0, 0.25);
+    background-color: transparent;
+    animation: loading 1s infinite;
+  }
+
+  .header-placeholder {
+    display: flex;
+    background-color: transparent;
+    width: 100%;
+    padding: 20px; /* Optional: Add some padding around the container */
+    margin-left: 100px;
+    margin-right: 100px;
+    border-radius: 8px;
+    box-shadow: 4px 6px 8px rgba(0, 0, 0, 0.25);
+    animation: loading 1s infinite;
+  }
+
+  .loading-placeholder-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 36px;
+    width: 100%;
+    margin-top: 50px;
+  }
+
+  @media (max-width: 1280px) {
+    .menu-card-item {
+      flex-basis: calc(50% - 20px);
+    }
+    .category p {
+      flex: 1 1 calc(50% - 40px);
+    }
+    .hero-content {
+      margin: 96px;
+    }
+
+    .hero-content h1 {
+      font-size: 96px;
+      line-height: 96px;
+    }
+
+    .hero-content p {
+      font-size: 16px;
+      line-height: 24px;
+    }
+
+    .cta-button {
+      font-size: 18px;
+    }
+  }
+
+  @media screen and (max-width: 768px) {
+    .header .nav {
+      display: none;
+      flex-direction: column;
+      position: absolute;
+      top: 72px;
+      left: 0;
+      width: 100%;
+      background-color: #fbf8f4;
+      padding: 16px;
+    }
+
+    .header .nav.active {
+      display: flex;
+    }
+
+    .header .menu-toggle {
+      display: block;
+      flex-direction: column;
+    }
+
+    .hero-section {
+      display: flex;
+      width: 100%;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .hero-banner,
+    .hero-content {
+      width: 100%;
+      align-items: center;
+      text-align: center;
+      justify-content: center;
+    }
+
+    .hero-content {
+      margin: 32px 0px 0px 0px;
+    }
+
+    .hero-banner img {
+      height: 45vh;
+      object-fit: cover;
+    }
+
+    .hero-content h1 {
+      font-size: 32px;
+      line-height: 32px;
+      text-align: center;
+    }
+
+    .hero-content p {
+      font-size: 16px;
+      line-height: 24px;
+      text-align: center;
+    }
+    .cta-button {
+      margin: auto;
+      font-size: 16px;
+      margin-top: 24px;
+    }
+
+    .menu-heading,
+    .menu-heading .line2 {
+      font-size: 64px;
+      font-weight: 400;
+      line-height: 80px;
+      .italic {
+        font-size: 64px;
+        font-weight: 400;
+        line-height: 80px;
+      }
+    }
+
+    .footer-content {
+      flex-direction: column;
+      gap: 36px;
+      align-items: center;
+      text-align: center;
+    }
+
+    .footer-link {
+      padding-left: 16px;
+    }
+
+    .footer-info h3 {
+      align-self: center;
+      text-align: center;
+      padding-left: 18px;
+    }
+
+    .footer h1 {
+      align-self: center;
+    }
+
+    .footer-info p {
+      align-self: center;
+      text-align: center;
+      padding-left: 32px;
+    }
+
+    .footer-info img {
+      align-self: center;
+      padding-left: 32px;
+      width: 250px;
+    }
+
+    .menu-card-item {
+      flex-basis: 100%; /* 1 item per row */
+      margin: 28px;
+    }
+
+    .category p {
+      flex: 1 1 100%; /* 1 item per row on small screens */
+    }
+
+    .logo-menu img {
+      width: 160px; /* Adjust width for tablets */
+    }
+  }
+}

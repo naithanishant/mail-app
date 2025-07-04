@@ -127,7 +127,6 @@ To build a basic Mailchimp-like web app where users can:
 
 ## ✅ Success Criteria
 
-- [ ] Functional and responsive React UI
 - [ ] Ability to manage templates and audience
 - [ ] Emails can be composed and sent from the app
 - [ ] Campaigns are logged in Contentstack

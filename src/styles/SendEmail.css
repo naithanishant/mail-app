@@ -1,0 +1,474 @@
+/* SendEmail Component Styles */
+
+.send-email-container {
+  max-width: 800px;
+  margin: 70px 0 0 0;
+  padding: 32px;
+  background-color: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.send-email-header {
+  text-align: center;
+  margin-bottom: 32px;
+  border-bottom: 2px solid #f0f0f0;
+  padding-bottom: 24px;
+}
+
+.send-email-header h1 {
+  color: #241d32;
+  font-size: 48px;
+  font-weight: 500;
+  line-height: 1.2;
+  margin: 0 0 16px 0;
+}
+
+.send-email-header p {
+  color: #666;
+  font-size: 18px;
+  font-weight: 300;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.send-email-form {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-label {
+  color: #241d32;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.5;
+  margin-bottom: 8px;
+}
+
+.form-input {
+  padding: 16px;
+  border: 2px solid #e5e5e5;
+  border-radius: 8px;
+  font-size: 16px;
+  line-height: 1.5;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  background-color: #ffffff;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: #3822aa;
+  box-shadow: 0 0 0 3px rgba(56, 34, 170, 0.1);
+}
+
+.form-input.error {
+  border-color: #dc3545;
+}
+
+.form-input.error:focus {
+  border-color: #dc3545;
+  box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);
+}
+
+.error-message {
+  color: #dc3545;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.4;
+  margin-top: 4px;
+}
+
+/* Recipients Styles */
+.recipients-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.selected-recipients {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.recipient-tag {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #3822aa;
+  color: #ffffff;
+  padding: 8px 12px;
+  border-radius: 24px;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.remove-recipient {
+  background: none;
+  border: none;
+  color: #ffffff;
+  cursor: pointer;
+  font-size: 18px;
+  font-weight: bold;
+  padding: 0;
+  margin-left: 4px;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.3s ease;
+}
+
+.remove-recipient:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.user-search-container {
+  position: relative;
+}
+
+.user-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background-color: #ffffff;
+  border: 2px solid #e5e5e5;
+  border-top: none;
+  border-radius: 0 0 8px 8px;
+  max-height: 300px;
+  overflow-y: auto;
+  z-index: 1000;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.user-dropdown-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.user-dropdown-item:last-child {
+  border-bottom: none;
+}
+
+.user-dropdown-item:hover {
+  background-color: #f8f9fa;
+}
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.user-name {
+  color: #241d32;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.user-email {
+  color: #666;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.4;
+}
+
+.user-status {
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.4;
+  padding: 4px 8px;
+  border-radius: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.user-status.subscribed {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.user-status.unsubscribed {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+/* Tags Styles */
+.tags-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.selected-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.tag-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #f8f9fa;
+  color: #241d32;
+  padding: 8px 12px;
+  border-radius: 24px;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.4;
+  border: 1px solid #e5e5e5;
+}
+
+.remove-tag {
+  background: none;
+  border: none;
+  color: #666;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  padding: 0;
+  margin-left: 4px;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.3s ease;
+}
+
+.remove-tag:hover {
+  color: #dc3545;
+}
+
+/* Rich Text Editor Styles */
+.quill-container {
+  border: 2px solid #e5e5e5;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.quill-container:focus-within {
+  border-color: #3822aa;
+  box-shadow: 0 0 0 3px rgba(56, 34, 170, 0.1);
+}
+
+.quill-container.error {
+  border-color: #dc3545;
+}
+
+.quill-container.error:focus-within {
+  border-color: #dc3545;
+  box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);
+}
+
+.quill-container .ql-toolbar {
+  border: none;
+  border-bottom: 1px solid #e5e5e5;
+  background-color: #f8f9fa;
+  padding: 12px;
+}
+
+.quill-container .ql-container {
+  border: none;
+  font-size: 16px;
+  line-height: 1.6;
+  min-height: 200px;
+}
+
+.quill-container .ql-editor {
+  padding: 16px;
+  min-height: 200px;
+}
+
+.quill-container .ql-editor.ql-blank::before {
+  color: #aaa;
+  font-style: italic;
+  font-size: 16px;
+  line-height: 1.6;
+  left: 16px;
+  right: 16px;
+}
+
+/* Submit Button Styles */
+.form-actions {
+  display: flex;
+  justify-content: center;
+  padding-top: 24px;
+  border-top: 2px solid #f0f0f0;
+}
+
+.send-button {
+  background-color: #3822aa;
+  color: #ffffff;
+  border: none;
+  border-radius: 24px;
+  padding: 16px 48px;
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1.4;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  min-width: 160px;
+}
+
+.send-button:hover:not(:disabled) {
+  background-color: #241d32;
+  transform: translateY(-2px);
+}
+
+.send-button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.send-button:active {
+  transform: translateY(0);
+}
+
+/* Responsive Design */
+@media screen and (max-width: 768px) {
+  .send-email-container {
+    padding: 24px 16px;
+    margin: 16px;
+  }
+
+  .send-email-header h1 {
+    font-size: 36px;
+  }
+
+  .send-email-header p {
+    font-size: 16px;
+  }
+
+  .send-email-form {
+    gap: 24px;
+  }
+
+  .form-group {
+    gap: 12px;
+  }
+
+  .form-input {
+    padding: 12px;
+    font-size: 16px;
+  }
+
+  .selected-recipients,
+  .selected-tags {
+    gap: 6px;
+  }
+
+  .recipient-tag,
+  .tag-item {
+    padding: 6px 10px;
+    font-size: 13px;
+  }
+
+  .user-dropdown-item {
+    padding: 10px 12px;
+  }
+
+  .user-name {
+    font-size: 15px;
+  }
+
+  .user-email {
+    font-size: 13px;
+  }
+
+  .quill-container .ql-container {
+    min-height: 150px;
+  }
+
+  .quill-container .ql-editor {
+    padding: 12px;
+    min-height: 150px;
+  }
+
+  .send-button {
+    padding: 14px 32px;
+    font-size: 18px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .send-email-container {
+    padding: 16px 12px;
+    margin: 8px;
+  }
+
+  .send-email-header h1 {
+    font-size: 28px;
+  }
+
+  .send-email-header p {
+    font-size: 14px;
+  }
+
+  .form-label {
+    font-size: 15px;
+  }
+
+  .form-input {
+    padding: 10px;
+    font-size: 15px;
+  }
+
+  .recipient-tag,
+  .tag-item {
+    padding: 5px 8px;
+    font-size: 12px;
+  }
+
+  .user-dropdown-item {
+    padding: 8px 10px;
+  }
+
+  .user-name {
+    font-size: 14px;
+  }
+
+  .user-email {
+    font-size: 12px;
+  }
+
+  .quill-container .ql-toolbar {
+    padding: 8px;
+  }
+
+  .quill-container .ql-container {
+    min-height: 120px;
+  }
+
+  .quill-container .ql-editor {
+    padding: 10px;
+    min-height: 120px;
+  }
+
+  .send-button {
+    padding: 12px 24px;
+    font-size: 16px;
+    min-width: 120px;
+  }
+} 
