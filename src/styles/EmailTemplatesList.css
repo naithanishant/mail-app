@@ -1,17 +1,17 @@
-.users-list-container {
+.email-templates-list-container {
   width: 800px;
   margin: 70px 0 0 0;
   padding: 20px;
 }
 
-.users-list-header {
+.email-templates-list-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 30px;
 }
 
-.add-user-button {
+.add-template-button {
   background-color: #007bff;
   color: white;
   padding: 10px 20px;
@@ -22,11 +22,11 @@
   font-weight: bold;
 }
 
-.add-user-button:hover {
+.add-template-button:hover {
   background-color: #0056b3;
 }
 
-.no-users-container {
+.no-templates-container {
   text-align: center;
   padding: 60px 20px;
   background-color: #f8f9fa;
@@ -34,17 +34,17 @@
   border: 2px dashed #dee2e6;
 }
 
-.no-users-title {
+.no-templates-title {
   color: #6c757d;
   margin-bottom: 10px;
 }
 
-.no-users-description {
+.no-templates-description {
   color: #6c757d;
   margin-bottom: 20px;
 }
 
-.add-first-user-button {
+.add-first-template-button {
   background-color: #28a745;
   color: white;
   padding: 12px 24px;
@@ -55,16 +55,16 @@
   font-weight: bold;
 }
 
-.add-first-user-button:hover {
+.add-first-template-button:hover {
   background-color: #1e7e34;
 }
 
-.users-grid {
+.templates-grid {
   display: grid;
   gap: 15px;
 }
 
-.user-card {
+.template-card {
   background-color: white;
   border: 1px solid #dee2e6;
   border-radius: 8px;
@@ -72,55 +72,62 @@
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-.user-card-content {
+.template-card.clickable {
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.template-card.clickable:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+  border-color: #007bff;
+}
+
+.template-card-content {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
 }
 
-.user-details {
+.template-details {
   flex: 1;
 }
 
-.user-name {
+.template-name {
   margin: 0 0 10px 0;
   color: #333;
 }
 
-.user-email {
+.template-subject {
   margin: 0 0 8px 0;
   color: #666;
 }
 
-.user-subscription {
+.template-body {
   margin: 0 0 8px 0;
   color: #666;
+  line-height: 1.4;
 }
 
-.user-created {
-  margin: 0;
-  color: #888;
-  font-size: 14px;
-}
-
-.subscription-badge {
+.active-badge {
   padding: 4px 8px;
   border-radius: 4px;
   font-size: 12px;
   font-weight: bold;
+  white-space: nowrap;
 }
 
-.subscription-badge.subscribed {
+.active-badge.active {
   background-color: #d4edda;
   color: #155724;
 }
 
-.subscription-badge.not-subscribed {
+.active-badge.inactive {
   background-color: #f8d7da;
   color: #721c24;
 }
 
-.users-count {
+.templates-count {
   margin-top: 30px;
   text-align: center;
   color: #6c757d;

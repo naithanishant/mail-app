@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
-import ReactQuill from 'react-quill';
-import 'react-quill/dist/quill.snow.css';
 import { RootState } from '../../store';
 import { TEmailForm, TEmailFormErrors, TSelectedUser, TEmailTag, TUsersData } from '../../types';
 import '../../styles/SendEmail.css';
+import RichTextEditor from '../shared/RichTextEditor/RichTextEditor';
+import { validateRTEContent, normalizeRTEContent } from '../../utils/rteUtils';
 
 const SendEmail: React.FC = () => {
-  const { usersData } = useSelector((state: RootState) => state.main);
+  const { usersData, emailTemplates } = useSelector((state: RootState) => state.main);
   const [formData, setFormData] = useState<TEmailForm>({
     subject: '',
     body: '',
@@ -20,6 +20,7 @@ const SendEmail: React.FC = () => {
   const [filteredUsers, setFilteredUsers] = useState<TUsersData[]>([]);
   const [tagInput, setTagInput] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [selectedTemplate, setSelectedTemplate] = useState<string>('');
   const userSearchRef = useRef<HTMLDivElement>(null);
 
   // Filter users based on search query
@@ -48,30 +49,7 @@ const SendEmail: React.FC = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Rich text editor configuration
-  const quillModules = {
-    toolbar: [
-      [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
-      ['bold', 'italic', 'underline', 'strike'],
-      [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-      [{ 'script': 'sub'}, { 'script': 'super' }],
-      [{ 'indent': '-1'}, { 'indent': '+1' }],
-      [{ 'direction': 'rtl' }],
-      [{ 'size': ['small', false, 'large', 'huge'] }],
-      [{ 'color': [] }, { 'background': [] }],
-      [{ 'font': [] }],
-      [{ 'align': [] }],
-      ['clean'],
-      ['link', 'image']
-    ],
-  };
-
-  const quillFormats = [
-    'header', 'font', 'size',
-    'bold', 'italic', 'underline', 'strike', 'blockquote',
-    'list', 'bullet', 'indent',
-    'link', 'image', 'color', 'background', 'align', 'script'
-  ];
+  // Rich text editor configuration is now handled by the shared RichTextEditor component
 
   const handleSubjectChange = (value: string) => {
     setFormData(prev => ({ ...prev, subject: value }));
@@ -81,9 +59,46 @@ const SendEmail: React.FC = () => {
   };
 
   const handleBodyChange = (value: string) => {
-    setFormData(prev => ({ ...prev, body: value }));
+    // Normalize the content to ensure consistent format
+    const normalizedValue = normalizeRTEContent(value);
+    
+    setFormData(prev => ({ ...prev, body: normalizedValue }));
     if (errors.body) {
       setErrors(prev => ({ ...prev, body: undefined }));
+    }
+  };
+
+  const handleTemplateSelect = (templateUid: string) => {
+    setSelectedTemplate(templateUid);
+    
+    if (templateUid === '') {
+      // Clear fields when "None" is selected
+      setFormData(prev => ({
+        ...prev,
+        subject: '',
+        body: ''
+      }));
+      return;
+    }
+
+    // Find the selected template by uid
+    const template = emailTemplates.find(t => t.uid === templateUid);
+    
+    if (template) {
+      const normalizedBody = normalizeRTEContent(template.template_body);
+      
+      setFormData(prev => ({
+        ...prev,
+        subject: template.template_subject,
+        body: normalizedBody
+      }));
+      
+      // Clear any existing errors for subject and body
+      setErrors(prev => ({
+        ...prev,
+        subject: undefined,
+        body: undefined
+      }));
     }
   };
 
@@ -159,8 +174,10 @@ const SendEmail: React.FC = () => {
       newErrors.subject = 'Subject is required';
     }
 
-    if (!formData.body.trim() || formData.body.trim() === '<p><br></p>') {
-      newErrors.body = 'Email body is required';
+    // Use consistent RTE validation
+    const bodyError = validateRTEContent(formData.body, 'Email body');
+    if (bodyError) {
+      newErrors.body = bodyError;
     }
 
     if (formData.recipients.length === 0) {
@@ -193,6 +210,7 @@ const SendEmail: React.FC = () => {
         recipients: [],
         tags: []
       });
+      setSelectedTemplate('');
       
       alert('Email sent successfully!');
     } catch (error) {
@@ -211,6 +229,33 @@ const SendEmail: React.FC = () => {
       </div>
 
       <form onSubmit={handleSubmit} className="send-email-form">
+        {/* Template Selection */}
+        <div className="form-group">
+          <label htmlFor="template" className="form-label">
+            Select Template (Optional)
+          </label>
+          <select
+            id="template"
+            value={selectedTemplate}
+            onChange={(e) => handleTemplateSelect(e.target.value)}
+            className="form-input template-select"
+          >
+            <option value="">None - Start from scratch</option>
+            {emailTemplates
+              .filter(template => template.active) // Only show active templates
+              .map((template) => (
+                <option key={template.uid} value={template.uid}>
+                  {template.template_name}
+                </option>
+              ))}
+          </select>
+          {selectedTemplate && (
+            <p className="template-info">
+              Template selected: The subject and body have been pre-filled. You can edit them before sending.
+            </p>
+          )}
+        </div>
+
         {/* Subject Field */}
         <div className="form-group">
           <label htmlFor="subject" className="form-label">
@@ -311,16 +356,14 @@ const SendEmail: React.FC = () => {
         {/* Body Field */}
         <div className="form-group">
           <label className="form-label">Email Body *</label>
-          <div className={`quill-container ${errors.body ? 'error' : ''}`}>
-            <ReactQuill
-              value={formData.body}
-              onChange={handleBodyChange}
-              modules={quillModules}
-              formats={quillFormats}
-              placeholder="Write your email content here..."
-              theme="snow"
-            />
-          </div>
+          <RichTextEditor
+            value={formData.body}
+            onChange={handleBodyChange}
+            placeholder="Write your email content here..."
+            hasError={!!errors.body}
+            minHeight={200}
+            maxHeight={400}
+          />
           {errors.body && <span className="error-message">{errors.body}</span>}
         </div>
 

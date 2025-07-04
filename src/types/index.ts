@@ -12,11 +12,21 @@ export type THeaderData = {
 };
 
 export type TUsersData = {
+  id: string;
   first_name: string;
   last_name: string;
   email: string;
   subscribed: boolean;
+  created_at: string;
 };
+
+export type TEmailTemplateData = {
+  uid: string;
+  template_name: string;
+  template_subject: string;
+  template_body: string;
+  active: boolean;
+}
 
 export type TLink = {
   href: string;

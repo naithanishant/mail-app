@@ -2,12 +2,14 @@ import { Dispatch } from "react";
 import { CONTENT_TYPES } from "../constants";
 import {
   setHeaderData,
-  setUsersData
+  setUsersData,
+  setEmailTemplatesData,
 } from "../reducer";
-import { initializeContentstackSdk } from "../sdk/utils";
+import { initializeContentstackSdk, initContentstackManagementSdk } from "../sdk/utils";
 import * as Utils from "@contentstack/utils";
 
 const Stack = initializeContentstackSdk();
+const ManagementStack = initContentstackManagementSdk();
 
 type GetEntryByUrl = {
   entryUrl: string | undefined;
@@ -61,6 +63,32 @@ export const getEntryByUrl = ({
   });
 };
 
+const publishEntry = (contentTypeUid: string, entryData: any) => {
+  return new Promise((resolve, reject) => {
+    ManagementStack.contentType(contentTypeUid).entry(entryData.uid).publish(entryData).then((result) => {
+      resolve(result);
+    }).catch((error) => {
+      reject(error);
+    });
+  });
+}
+
+export const createEntry = ({
+  contentTypeUid,
+  entryData
+}: {
+  contentTypeUid: string;
+  entryData: any;
+}): Promise<any> => {
+  return new Promise((resolve, reject) => {
+    ManagementStack.contentType(contentTypeUid).entry().create(entryData).then((result) => {
+      resolve(result);
+    }).catch((error) => {
+      reject(error);
+    });
+  });
+}
+
 export const fetchHeaderData = async (
   dispatch: Dispatch<any>
 ): Promise<void> => {
@@ -75,6 +103,29 @@ export const fetchUsersData = async (
   dispatch(setUsersData(data[0]));
 };
 
+export const fetchEmailTemplateData = async (
+  dispatch: Dispatch<any>
+): Promise<void> => {
+  const data = await getEntry(CONTENT_TYPES.EMAIL_TEMPLATE);
+  dispatch(setEmailTemplatesData(data[0]));
+};
+
+export const createUser = async (
+  dispatch: Dispatch<any>,
+  userData: any,
+): Promise<void> => {
+  const data = await createEntry({ contentTypeUid: CONTENT_TYPES.USERS, entryData: userData });
+  await fetchUsersData(dispatch);
+};
+
+export const createEmailTemplate = async (
+  dispatch: Dispatch<any>,
+  templateData: any,
+): Promise<void> => {
+  const data = await createEntry({ contentTypeUid: CONTENT_TYPES.EMAIL_TEMPLATE, entryData: templateData });
+  await fetchEmailTemplateData(dispatch);
+};
+
 export const fetchInitialData = async (
   dispatch: Dispatch<any>,
   setLoading: (status: boolean) => void
@@ -83,6 +134,7 @@ export const fetchInitialData = async (
     await Promise.all([
       fetchHeaderData(dispatch),
       fetchUsersData(dispatch),
+      fetchEmailTemplateData(dispatch),
     ]);
     setLoading(false);
   } catch (error) {

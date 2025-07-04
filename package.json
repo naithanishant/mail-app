@@ -5,6 +5,7 @@
   "private": true,
   "author": "Contentstack",
   "dependencies": {
+    "@contentstack/management": "^1.21.7",
     "@contentstack/venus-components": "^2.2.4",
     "@reduxjs/toolkit": "^2.2.1",
     "@testing-library/jest-dom": "^5.17.0",

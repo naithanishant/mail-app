@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import '../../styles/UsersList.css';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../../store';
+import { createUser } from '../../api';
+import AddUserModal from './components/AddUserModal';
 
 interface User {
   id: string;
@@ -12,19 +14,43 @@ interface User {
   created_at: string;
 }
 
-interface UsersListProps {
-  users: User[];
-  onAddUser: () => void;
-}
-
 const UsersList: React.FC<any> = () => {
   const users = useSelector((state: RootState) => state.main.usersData);
+  const dispatch = useDispatch();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleOpenModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleAddUser = async (userData: { first_name: string; last_name: string; email: string }) => {
+    const newUser = {
+      title: `${userData.first_name} ${userData.last_name}`,
+      first_name: userData.first_name,
+      last_name: userData.last_name,
+      email: userData.email,
+      subscribed: false, // Default to not subscribed
+    };
+
+    try {
+      // Use the API function to create user in Contentstack
+      await createUser(dispatch, { entry: newUser });
+    } catch (error) {
+      console.error('Error creating user:', error);
+      // You might want to show an error message to the user here
+    }
+  };
+
   return (
     <div className="users-list-container">
       <div className="users-list-header">
         <h1>Users Management</h1>
         <button
-          // onClick={onAddUser}
+          onClick={handleOpenModal}
           className="add-user-button"
         >
           + Add New User
@@ -36,7 +62,7 @@ const UsersList: React.FC<any> = () => {
           <h3 className="no-users-title">No users found</h3>
           <p className="no-users-description">Get started by adding your first user</p>
           <button
-            // onClick={onAddUser}
+            onClick={handleOpenModal}
             className="add-first-user-button"
           >
             Add First User
@@ -57,9 +83,6 @@ const UsersList: React.FC<any> = () => {
                   <p className="user-email">
                     <strong>Email:</strong> {user.email}
                   </p>
-                  <p className="user-subscription">
-                    <strong>Newsletter:</strong> {user.subscribed ? 'Subscribed' : 'Not Subscribed'}
-                  </p>
                 </div>
                 <div className={`subscription-badge ${user.subscribed ? 'subscribed' : 'not-subscribed'}`}>
                   {user.subscribed ? 'SUBSCRIBED' : 'NOT SUBSCRIBED'}
@@ -75,6 +98,12 @@ const UsersList: React.FC<any> = () => {
           Total Users: {users.length}
         </div>
       )}
+
+      <AddUserModal
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        onAddUser={handleAddUser}
+      />
     </div>
   );
 };

@@ -1,0 +1,182 @@
+/* Rich Text Editor Container */
+.rte-container {
+  border: 2px solid #e5e5e5;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  background: white;
+}
+
+.rte-container:focus-within {
+  border-color: #007bff;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+}
+
+/* Error state */
+.rte-container.rte-error {
+  border-color: #dc3545;
+}
+
+.rte-container.rte-error:focus-within {
+  border-color: #dc3545;
+  box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);
+}
+
+/* Read-only state */
+.rte-container.rte-readonly {
+  background-color: #f8f9fa;
+  border-color: #dee2e6;
+}
+
+.rte-container.rte-readonly:focus-within {
+  border-color: #dee2e6;
+  box-shadow: none;
+}
+
+/* Toolbar styling */
+.rte-container .ql-toolbar {
+  border: none;
+  border-bottom: 1px solid #e5e5e5;
+  background-color: #f8f9fa;
+  padding: 12px;
+}
+
+.rte-container.rte-readonly .ql-toolbar {
+  display: none;
+}
+
+.rte-container .ql-toolbar .ql-picker {
+  color: #333;
+}
+
+.rte-container .ql-toolbar .ql-stroke {
+  stroke: #333;
+}
+
+.rte-container .ql-toolbar .ql-fill {
+  fill: #333;
+}
+
+.rte-container .ql-toolbar button:hover {
+  background-color: #e9ecef;
+  border-radius: 4px;
+}
+
+.rte-container .ql-toolbar button.ql-active {
+  background-color: #007bff;
+  color: white;
+  border-radius: 4px;
+}
+
+.rte-container .ql-toolbar button.ql-active .ql-stroke {
+  stroke: white;
+}
+
+.rte-container .ql-toolbar button.ql-active .ql-fill {
+  fill: white;
+}
+
+/* Editor container */
+.rte-container .ql-container {
+  border: none;
+  font-size: 16px;
+  line-height: 1.6;
+  min-height: var(--min-height, 200px);
+}
+
+.rte-container .ql-editor {
+  padding: 16px;
+  min-height: var(--min-height, 200px);
+  max-height: var(--max-height, 400px);
+  overflow-y: auto;
+}
+
+.rte-container.rte-readonly .ql-editor {
+  background-color: #f8f9fa;
+  cursor: default;
+}
+
+/* Placeholder styling */
+.rte-container .ql-editor.ql-blank::before {
+  color: #6c757d;
+  font-style: italic;
+  font-size: 16px;
+  line-height: 1.6;
+  left: 16px;
+  right: 16px;
+}
+
+/* Custom scrollbar for editor */
+.rte-container .ql-editor::-webkit-scrollbar {
+  width: 8px;
+}
+
+.rte-container .ql-editor::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.rte-container .ql-editor::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+.rte-container .ql-editor::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* Responsive Design */
+@media screen and (max-width: 768px) {
+  .rte-container {
+    border-width: 1px;
+  }
+  
+  .rte-container .ql-toolbar {
+    padding: 8px;
+  }
+  
+  .rte-container .ql-container {
+    font-size: 15px;
+    min-height: var(--min-height, 150px);
+  }
+  
+  .rte-container .ql-editor {
+    padding: 12px;
+    min-height: var(--min-height, 150px);
+    max-height: var(--max-height, 300px);
+  }
+  
+  .rte-container .ql-editor.ql-blank::before {
+    font-size: 15px;
+    left: 12px;
+    right: 12px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .rte-container .ql-toolbar {
+    padding: 6px;
+  }
+  
+  .rte-container .ql-container {
+    font-size: 14px;
+    min-height: var(--min-height, 120px);
+  }
+  
+  .rte-container .ql-editor {
+    padding: 10px;
+    min-height: var(--min-height, 120px);
+    max-height: var(--max-height, 250px);
+  }
+  
+  .rte-container .ql-editor.ql-blank::before {
+    font-size: 14px;
+    left: 10px;
+    right: 10px;
+  }
+  
+  /* Simplify toolbar on very small screens */
+  .rte-container .ql-toolbar .ql-formats {
+    margin-right: 8px;
+  }
+} 

@@ -1,9 +1,10 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { THeaderData, TUsersData } from "../types";
+import { THeaderData, TUsersData, TEmailTemplateData } from "../types";
 
 interface AppState {
   headerData: THeaderData;
   usersData: TUsersData[];
+  emailTemplates: TEmailTemplateData[];
 }
 
 const initialState: AppState = {
@@ -21,14 +22,8 @@ const initialState: AppState = {
       ],
     },
   },
-  usersData: [
-    {
-      first_name: "",
-      last_name: "",
-      email: "",
-      subscribed: false,
-    }
-  ],
+  usersData: [],
+  emailTemplates: []
 };
 
 const mainSlice = createSlice({
@@ -41,12 +36,16 @@ const mainSlice = createSlice({
     setUsersData: (state, action: PayloadAction<TUsersData[]>) => {
       state.usersData = action.payload;
     },
+    setEmailTemplatesData: (state, action: PayloadAction<TEmailTemplateData[]>) => {
+      state.emailTemplates = action.payload;
+    },
   },
 });
 
 export const {
   setHeaderData,
   setUsersData,
+  setEmailTemplatesData,
 } = mainSlice.actions;
 
 export default mainSlice.reducer;
