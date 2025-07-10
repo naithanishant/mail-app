@@ -2,11 +2,6 @@ import { Dispatch } from "react";
 import { CONTENT_TYPES } from "../constants";
 import {
   setHeaderData,
-<<<<<<< Updated upstream
-  setUsersData
-} from "../reducer";
-import { initializeContentstackSdk } from "../sdk/utils";
-=======
   setUsersData,
   setUsersPaginationData,
   addUserData,
@@ -14,12 +9,12 @@ import { initializeContentstackSdk } from "../sdk/utils";
   addEmailTemplateData,
 } from "../reducer";
 import { TUsersPaginationData } from "../types";
-import { initializeContentstackSdk, initContentstackManagementSdk } from "../sdk/utils";
->>>>>>> Stashed changes
+import { initializeContentstackSdk, initializeContentstackManagementSdk } from "../sdk/utils";
 import * as Utils from "@contentstack/utils";
 import { TCreateEmailTemplateInput, TCreateCustomTemplateInput } from "../types";
 
 const Stack = initializeContentstackSdk();
+const ManagementStack = initializeContentstackManagementSdk();
 
 type GetEntryByUrl = {
   entryUrl: string | undefined;
@@ -111,8 +106,6 @@ export const getEntryByUrl = ({
   });
 };
 
-<<<<<<< Updated upstream
-=======
 const publishEntry = (contentTypeUid: string, entryData: any) => {
   return new Promise((resolve, reject) => {
     ManagementStack.contentType(contentTypeUid).entry(entryData.uid).publish(entryData).then((result) => {
@@ -140,7 +133,6 @@ export const createEntry = ({
   });
 }
 
->>>>>>> Stashed changes
 export const fetchHeaderData = async (
   dispatch: Dispatch<any>
 ): Promise<void> => {
@@ -170,8 +162,6 @@ export const fetchUsersData = async (
   dispatch(setUsersPaginationData(paginationData));
 };
 
-<<<<<<< Updated upstream
-=======
 export const fetchEmailTemplateData = async (
   dispatch: Dispatch<any>
 ): Promise<void> => {
@@ -184,8 +174,8 @@ export const createUser = async (
   userData: any,
 ): Promise<void> => {
   const data = await createEntry({ contentTypeUid: CONTENT_TYPES.USERS, entryData: userData });
-  const { uid, first_name, last_name, email, subscribed, created_at } = data;
-  dispatch(addUserData({ id: uid, uid, first_name, last_name, email, subscribed, created_at }));
+  const { uid, first_name, last_name, email, subscribed } = data;
+  dispatch(addUserData({ id: uid, uid, first_name, last_name, email, subscribed }));
 };
 
 export const createContentType = async (schema: any): Promise<any> => {
@@ -534,7 +524,6 @@ export const createTemplateContentType = async (dragDropData: any): Promise<stri
   }
 };
 
->>>>>>> Stashed changes
 export const fetchInitialData = async (
   dispatch: Dispatch<any>,
   setLoading: (status: boolean) => void
@@ -543,12 +532,8 @@ export const fetchInitialData = async (
     console.log("fetching initial data");
     await Promise.all([
       fetchHeaderData(dispatch),
-<<<<<<< Updated upstream
-      fetchUsersData(dispatch),
-=======
       fetchUsersData(dispatch, 1, 5), // Start with first page, 5 users per page
       fetchEmailTemplateData(dispatch),
->>>>>>> Stashed changes
     ]);
     setLoading(false);
   } catch (error) {

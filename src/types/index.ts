@@ -12,19 +12,14 @@ export type THeaderData = {
 };
 
 export type TUsersData = {
-<<<<<<< Updated upstream
-=======
   id: string;
   uid: string;
->>>>>>> Stashed changes
   first_name: string;
   last_name: string;
   email: string;
   subscribed: boolean;
 };
 
-<<<<<<< Updated upstream
-=======
 export type TUsersPaginationData = {
   users: TUsersData[];
   pagination: {
@@ -106,7 +101,6 @@ export type TCreateCustomTemplateInput = {
   dragDropData: import('../schemas/templateSchema').TDragDropTemplate;
 }
 
->>>>>>> Stashed changes
 export type TLink = {
   href: string;
   title: string;
