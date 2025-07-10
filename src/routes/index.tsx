@@ -14,7 +14,7 @@ const AppRoutes: React.FC = () => {
 
   useEffect(() => {
     fetchInitialData(dispatch, setLoading);
-  }, [dispatch]);
+  }, []); // Empty dependency array - runs only once
 
   return (
     <Router>
