@@ -126,7 +126,6 @@ export const createEntry = ({
   return new Promise((resolve, reject) => {
     ManagementStack.contentType(contentTypeUid).entry().create(entryData).then((result) => {
       resolve(result);
-      // await 
     }).catch((error) => {
       reject(error);
     });
@@ -523,6 +522,29 @@ export const createTemplateContentType = async (dragDropData: any): Promise<stri
     throw error;
   }
 };
+
+// export const fetchEmailTemplateData = async (
+//   dispatch: Dispatch<any>
+// ): Promise<void> => {
+//   const data = await getEntry(CONTENT_TYPES.EMAIL_TEMPLATE);
+//   dispatch(setEmailTemplatesData(data[0]));
+// };
+
+// export const createUser = async (
+//   dispatch: Dispatch<any>,
+//   userData: any,
+// ): Promise<void> => {
+//   const data = await createEntry({ contentTypeUid: CONTENT_TYPES.USERS, entryData: userData });
+//   await fetchUsersData(dispatch);
+// };
+
+// export const createEmailTemplate = async (
+//   dispatch: Dispatch<any>,
+//   templateData: any,
+// ): Promise<void> => {
+//   const data = await createEntry({ contentTypeUid: CONTENT_TYPES.EMAIL_TEMPLATE, entryData: templateData });
+//   await fetchEmailTemplateData(dispatch);
+// };
 
 export const fetchInitialData = async (
   dispatch: Dispatch<any>,

@@ -15,11 +15,6 @@ interface User {
   created_at: string;
 }
 
-interface UsersListProps {
-  users: User[];
-  onAddUser: () => void;
-}
-
 const UsersList: React.FC<any> = () => {
   const { usersData, usersPagination } = useSelector((state: RootState) => state.main);
   const dispatch = useDispatch();
@@ -115,7 +110,7 @@ const UsersList: React.FC<any> = () => {
       <div className="users-list-header">
         <h1>Users Management</h1>
         <button
-          onClick={onAddUser}
+          onClick={handleOpenModal}
           className="add-user-button"
         >
           + Add New User
@@ -127,7 +122,7 @@ const UsersList: React.FC<any> = () => {
           <h3 className="no-users-title">No users found</h3>
           <p className="no-users-description">Get started by adding your first user</p>
           <button
-            onClick={onAddUser}
+            onClick={handleOpenModal}
             className="add-first-user-button"
           >
             Add First User
@@ -213,6 +208,12 @@ const UsersList: React.FC<any> = () => {
           Total Users: {usersPagination.totalCount}
         </div>
       )}
+
+      <AddUserModal
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        onAddUser={handleAddUser}
+      />
     </div>
   );
 };

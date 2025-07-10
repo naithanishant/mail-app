@@ -18,6 +18,7 @@ export type TUsersData = {
   last_name: string;
   email: string;
   subscribed: boolean;
+  created_at?: string;
 };
 
 export type TUsersPaginationData = {

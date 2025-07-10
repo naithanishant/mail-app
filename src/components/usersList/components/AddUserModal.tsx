@@ -4,24 +4,14 @@ import '../../../styles/AddUserModal.css';
 interface AddUserModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onAddUser: (userData: { 
-    first_name: string; 
-    last_name: string; 
-    email: string; 
-    subscribed: boolean; 
-  }) => void;
+  onAddUser: (userData: { first_name: string; last_name: string; email: string }) => void;
 }
 
-const AddUserModal: React.FC<AddUserModalProps> = ({ 
-  isOpen, 
-  onClose, 
-  onAddUser 
-}) => {
+const AddUserModal: React.FC<AddUserModalProps> = ({ isOpen, onClose, onAddUser }) => {
   const [formData, setFormData] = useState({
     first_name: '',
     last_name: '',
     email: '',
-    subscribed: true
   });
 
   const [errors, setErrors] = useState({
@@ -44,14 +34,6 @@ const AddUserModal: React.FC<AddUserModalProps> = ({
         [name]: ''
       }));
     }
-  };
-
-  const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, checked } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: checked
-    }));
   };
 
   const validateForm = () => {
@@ -93,7 +75,6 @@ const AddUserModal: React.FC<AddUserModalProps> = ({
       first_name: '',
       last_name: '',
       email: '',
-      subscribed: true
     });
     setErrors({
       first_name: '',
@@ -156,18 +137,6 @@ const AddUserModal: React.FC<AddUserModalProps> = ({
               placeholder="Enter email address"
             />
             {errors.email && <span className="error-message">{errors.email}</span>}
-          </div>
-
-          <div className="form-group">
-            <label className="checkbox-label">
-              <input
-                type="checkbox"
-                name="subscribed"
-                checked={formData.subscribed}
-                onChange={handleCheckboxChange}
-              />
-              Subscribed
-            </label>
           </div>
 
           <div className="modal-actions">
