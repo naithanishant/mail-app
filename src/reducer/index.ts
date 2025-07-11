@@ -13,6 +13,7 @@ interface AppState {
     hasPreviousPage: boolean;
   };
   emailTemplates: TEmailTemplateData[];
+  customTemplates: any;
 }
 
 const initialState: AppState = {
@@ -39,7 +40,8 @@ const initialState: AppState = {
     hasNextPage: false,
     hasPreviousPage: false,
   },
-  emailTemplates: []
+  emailTemplates: [],
+  customTemplates: []
 };
 
 const mainSlice = createSlice({
@@ -70,6 +72,9 @@ const mainSlice = createSlice({
       const templates = [action.payload, ...state.emailTemplates];
       state.emailTemplates = templates;
     },
+    setCustomTemplatesData: (state, action: PayloadAction<any>) => {
+      state.customTemplates = action.payload;
+    },
   },
 });
 
@@ -80,6 +85,7 @@ export const {
   addUserData,
   setEmailTemplatesData,
   addEmailTemplateData,
+  setCustomTemplatesData,
 } = mainSlice.actions;
 
 export default mainSlice.reducer;

@@ -5,6 +5,9 @@ export type TSectionType =
   | 'text'
   | 'image'
   | 'file'
+  | 'background'
+  | 'fontstyle'
+  | 'link'
   | 'cc'
   | 'bcc';
 
@@ -26,6 +29,9 @@ export type TSectionConfig =
   | TTextConfig
   | TImageConfig
   | TFileConfig
+  | TBackgroundConfig
+  | TFontStyleConfig
+  | TLinkConfig
   | TCCConfig
   | TBCCConfig;
 
@@ -72,23 +78,30 @@ export interface TTextConfig {
   allowVariables: boolean;
 }
 
-// Image Section Configuration
+// Image Section Configuration - Asset Selection from Contentstack
 export interface TImageConfig {
   // Structural properties
   label: string;
   description?: string;
   required: boolean;
-  maxWidth?: number;
-  maxHeight?: number;
-  allowedTypes?: string[];
   
-  // Content properties (used for preview/defaults)
-  url: string;
+  // Asset selection properties
+  selectedAssetUid?: string;
+  selectedAssetUrl?: string;
+  selectedAssetTitle?: string;
+  selectedAssetDescription?: string;
+  selectedAssetFilename?: string;
+  selectedAssetFilesize?: number;
+  selectedAssetDimensions?: {
+    width: number;
+    height: number;
+  };
+  
+  // Display properties
   alt: string;
-  width: number;
-  height: number;
-  fit: TImageFit;
   alignment: TAlignment;
+  maxDisplayWidth?: number;
+  maxDisplayHeight?: number;
   clickable: boolean;
   linkUrl?: string;
   linkTarget?: '_blank' | '_self';
@@ -96,20 +109,94 @@ export interface TImageConfig {
   captionAlignment?: TAlignment;
 }
 
-// File Section Configuration
+// File Section Configuration - Asset Selection from Contentstack
 export interface TFileConfig {
   // Structural properties
   label: string;
   description?: string;
   required: boolean;
-  allowedTypes?: string[];
-  maxSize?: string;
+  
+  // Asset selection properties
+  selectedAssetUid?: string;
+  selectedAssetUrl?: string;
+  selectedAssetTitle?: string;
+  selectedAssetDescription?: string;
+  selectedAssetFilename?: string;
+  selectedAssetFilesize?: number;
+  selectedAssetMimeType?: string;
+  
+  // Display properties
+  displayText?: string;
+  showFileSize?: boolean;
+  showIcon?: boolean;
+  downloadable?: boolean;
+  openInNewTab?: boolean;
+}
+
+// Background Section Configuration
+export interface TBackgroundConfig {
+  // Structural properties
+  label: string;
+  description?: string;
+  required: boolean;
   
   // Content properties (used for preview/defaults)
-  fileName: string;
-  fileUrl: string;
-  fileSize?: string;
-  fileType: 'pdf' | 'doc' | 'xls' | 'txt' | 'other';
+  backgroundColor: string;
+  backgroundGradient?: {
+    type: 'linear' | 'radial';
+    colors: string[];
+    direction?: string;
+  };
+  backgroundImage?: string;
+  backgroundSize?: 'cover' | 'contain' | 'auto';
+  backgroundPosition?: string;
+  backgroundRepeat?: 'repeat' | 'no-repeat' | 'repeat-x' | 'repeat-y';
+}
+
+// Font Style Section Configuration
+export interface TFontStyleConfig {
+  // Structural properties
+  label: string;
+  description?: string;
+  required: boolean;
+  
+  // Content properties (used for preview/defaults)
+  fontFamily: string;
+  fontSize: number;
+  fontWeight: 'normal' | 'bold' | '500' | '600' | '700';
+  fontStyle: 'normal' | 'italic';
+  textDecoration: 'none' | 'underline' | 'line-through';
+  textTransform: 'none' | 'uppercase' | 'lowercase' | 'capitalize';
+  letterSpacing: number;
+  lineHeight: number;
+  textColor: string;
+  applyToAll: boolean;
+}
+
+// Link Section Configuration
+export interface TLinkConfig {
+  // Structural properties
+  label: string;
+  description?: string;
+  required: boolean;
+  
+  // Content properties (used for preview/defaults)
+  linkText: string;
+  linkUrl: string;
+  linkTarget: '_blank' | '_self';
+  linkColor: string;
+  linkDecoration: 'none' | 'underline' | 'overline' | 'line-through';
+  linkHoverColor?: string;
+  linkAlignment: TAlignment;
+  linkSize: 'small' | 'medium' | 'large';
+  linkFontWeight: 'normal' | 'bold' | '500' | '600' | '700';
+  linkFontStyle: 'normal' | 'italic';
+  linkPadding: {
+    top: number;
+    bottom: number;
+    left: number;
+    right: number;
+  };
 }
 
 // CC Section Configuration
@@ -286,34 +373,89 @@ export const DEFAULT_SECTION_CONFIGS: Record<TSectionType, any> = {
   } as TTextConfig,
   image: {
     label: 'Image',
-    description: 'Upload an image',
+    description: 'Select an image from Contentstack assets',
     required: false,
-    maxWidth: 600,
-    maxHeight: 400,
-    allowedTypes: ['jpg', 'jpeg', 'png', 'gif', 'webp'],
-    url: '',
+    selectedAssetUid: undefined,
+    selectedAssetUrl: undefined,
+    selectedAssetTitle: undefined,
+    selectedAssetDescription: undefined,
+    selectedAssetFilename: undefined,
+    selectedAssetFilesize: undefined,
+    selectedAssetDimensions: undefined,
     alt: '',
-    width: 300,
-    height: 200,
-    fit: 'cover',
     alignment: 'center',
+    maxDisplayWidth: undefined,
+    maxDisplayHeight: undefined,
     clickable: false,
-    linkUrl: '',
+    linkUrl: undefined,
     linkTarget: '_blank',
-    caption: '',
+    caption: undefined,
     captionAlignment: 'center',
   } as TImageConfig,
   file: {
     label: 'File Attachment',
-    description: 'Attach a file',
+    description: 'Select a file from Contentstack assets',
     required: false,
-    allowedTypes: ['pdf', 'doc', 'docx', 'xls', 'xlsx', 'txt'],
-    maxSize: '10MB',
-    fileName: '',
-    fileUrl: '',
-    fileSize: '',
-    fileType: 'pdf',
+    selectedAssetUid: undefined,
+    selectedAssetUrl: undefined,
+    selectedAssetTitle: undefined,
+    selectedAssetDescription: undefined,
+    selectedAssetFilename: undefined,
+    selectedAssetFilesize: undefined,
+    selectedAssetMimeType: undefined,
+    displayText: undefined,
+    showFileSize: true,
+    showIcon: true,
+    downloadable: true,
+    openInNewTab: true,
   } as TFileConfig,
+  background: {
+    label: 'Background',
+    description: 'Set background color or image',
+    required: false,
+    backgroundColor: '#ffffff',
+    backgroundGradient: undefined,
+    backgroundImage: undefined,
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+    backgroundRepeat: 'no-repeat',
+  } as TBackgroundConfig,
+  fontstyle: {
+    label: 'Font Style',
+    description: 'Configure font settings',
+    required: false,
+    fontFamily: 'Arial, sans-serif',
+    fontSize: 16,
+    fontWeight: 'normal',
+    fontStyle: 'normal',
+    textDecoration: 'none',
+    textTransform: 'none',
+    letterSpacing: 0,
+    lineHeight: 1.5,
+    textColor: '#333333',
+    applyToAll: false,
+  } as TFontStyleConfig,
+  link: {
+    label: 'Link',
+    description: 'Add a clickable link',
+    required: false,
+    linkText: 'Click Here',
+    linkUrl: '',
+    linkTarget: '_blank',
+    linkColor: '#007bff',
+    linkDecoration: 'underline',
+    linkHoverColor: '#0056b3',
+    linkAlignment: 'left',
+    linkSize: 'medium',
+    linkFontWeight: 'normal',
+    linkFontStyle: 'normal',
+    linkPadding: {
+      top: 4,
+      bottom: 4,
+      left: 8,
+      right: 8,
+    },
+  } as TLinkConfig,
   cc: {
     label: 'CC Recipients',
     description: 'Carbon copy recipients',
@@ -424,11 +566,11 @@ export const validateSection = (section: TTemplateSection): TValidationError[] =
       
     case 'image':
       const imageConfig = section.config as TImageConfig;
-      if (!imageConfig.url?.trim()) {
+      if (!imageConfig.selectedAssetUid) {
         errors.push({
           sectionId: section.id,
-          field: 'url',
-          message: 'Image URL is required',
+          field: 'selectedAssetUid',
+          message: 'Please select an image from Contentstack assets',
           severity: 'error',
         });
       }
@@ -436,11 +578,55 @@ export const validateSection = (section: TTemplateSection): TValidationError[] =
       
     case 'file':
       const fileConfig = section.config as TFileConfig;
-      if (!fileConfig.fileName?.trim()) {
+      if (!fileConfig.selectedAssetUid) {
         errors.push({
           sectionId: section.id,
-          field: 'fileName',
-          message: 'File name is required',
+          field: 'selectedAssetUid',
+          message: 'Please select a file from Contentstack assets',
+          severity: 'error',
+        });
+      }
+      break;
+      
+    case 'background':
+      const backgroundConfig = section.config as TBackgroundConfig;
+      if (!backgroundConfig.backgroundColor && !backgroundConfig.backgroundImage) {
+        errors.push({
+          sectionId: section.id,
+          field: 'backgroundColor',
+          message: 'Background color or image is required',
+          severity: 'warning',
+        });
+      }
+      break;
+      
+    case 'fontstyle':
+      const fontstyleConfig = section.config as TFontStyleConfig;
+      if (!fontstyleConfig.fontFamily?.trim()) {
+        errors.push({
+          sectionId: section.id,
+          field: 'fontFamily',
+          message: 'Font family is required',
+          severity: 'error',
+        });
+      }
+      break;
+      
+    case 'link':
+      const linkConfig = section.config as TLinkConfig;
+      if (!linkConfig.linkText?.trim()) {
+        errors.push({
+          sectionId: section.id,
+          field: 'linkText',
+          message: 'Link text is required',
+          severity: 'error',
+        });
+      }
+      if (!linkConfig.linkUrl?.trim()) {
+        errors.push({
+          sectionId: section.id,
+          field: 'linkUrl',
+          message: 'Link URL is required',
           severity: 'error',
         });
       }

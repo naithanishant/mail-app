@@ -134,3 +134,90 @@ export type TEmailFormErrors = {
   recipients?: string;
   tags?: string;
 };
+
+// Custom Template (Content Type) structure
+export type TCustomTemplate = {
+  uid: string;
+  title: string;
+  description: string;
+  schema: TContentTypeField[];
+  created_at: string;
+  updated_at: string;
+};
+
+// Content Type Field structure
+export type TContentTypeField = {
+  uid: string;
+  display_name: string;
+  data_type: string;
+  field_metadata: {
+    description?: string;
+    default_value?: any;
+    multiline?: boolean;
+    rich_text_type?: string;
+    image?: boolean;
+    file_size?: string;
+    extensions?: string[];
+    options?: any[];
+    instruction?: string; // For group fields
+  };
+  unique?: boolean;
+  mandatory?: boolean;
+  multiple?: boolean;
+  schema?: TContentTypeField[]; // For group fields with nested schema
+};
+
+// Asset structure from Contentstack
+export type TContentstackAsset = {
+  uid: string;
+  title: string;
+  filename: string;
+  url: string;
+  content_type: string;
+  file_size: string;
+  dimension?: {
+    width: number;
+    height: number;
+  };
+  created_at: string;
+  updated_at: string;
+};
+
+// Dynamic field value structure
+export type TDynamicFieldValue = {
+  fieldUID: string;
+  fieldType: string;
+  value: any;
+  assets?: TContentstackAsset[]; // For file/image fields
+  nestedFields?: TDynamicFieldValue[]; // For group fields with nested values
+};
+
+// Enhanced email form structure for custom templates
+export type TCustomEmailForm = {
+  selectedContentType: string;
+  title: string;
+  subject: string;
+  recipients: TSelectedUser[];
+  tags: TEmailTag[];
+  ccRecipients: string;
+  bccRecipients: string;
+  dynamicFields: TDynamicFieldValue[];
+};
+
+// Enhanced email form errors
+export type TCustomEmailFormErrors = {
+  selectedContentType?: string;
+  title?: string;
+  subject?: string;
+  recipients?: string;
+  tags?: string;
+  ccRecipients?: string;
+  bccRecipients?: string;
+  dynamicFields?: { [fieldUID: string]: string };
+};
+
+// Asset upload response
+export type TAssetUploadResponse = {
+  asset: TContentstackAsset;
+  notice: string;
+};

@@ -9,6 +9,9 @@ import {
   TTextConfig,
   TImageConfig,
   TFileConfig,
+  TBackgroundConfig,
+  TFontStyleConfig,
+  TLinkConfig,
   TCCConfig,
   TBCCConfig
 } from '../../../schemas/templateSchema';
@@ -34,8 +37,11 @@ interface SectionLibraryItem {
 
 const BODY_SECTIONS: SectionLibraryItem[] = [
   { id: 'text', type: 'text', name: 'Text', description: 'Add text content', icon: '📝' },
-  { id: 'image', type: 'image', name: 'Image', description: 'Add images', icon: '🖼️' },
-  { id: 'file', type: 'file', name: 'Files', description: 'Attach files', icon: '📎' },
+  { id: 'image', type: 'image', name: 'Image', description: 'Select image from Contentstack assets', icon: '🖼️' },
+  { id: 'file', type: 'file', name: 'File', description: 'Select file from Contentstack assets', icon: '📎' },
+  // { id: 'background', type: 'background', name: 'Background', description: 'Set background color or image', icon: '🎨' },
+  // { id: 'fontstyle', type: 'fontstyle', name: 'Font Style', description: 'Configure font settings', icon: '🔤' },
+  { id: 'link', type: 'link', name: 'Link', description: 'Add clickable link', icon: '🔗' },
 ];
 
 const MISCELLANEOUS_SECTIONS: SectionLibraryItem[] = [
@@ -90,11 +96,12 @@ const DragDropTemplateModal: React.FC<DragDropTemplateModalProps> = ({
   };
 
   const handleDragStart = (e: React.DragEvent, sectionType: TSectionType) => {
-    // Check if CC or BCC already exists in template
+    // Check if CC, BCC, or Link already exists in template
     if ((sectionType === 'cc' || sectionType === 'bcc') && 
         template.sections.some((section: any) => section.type === sectionType)) {
       e.preventDefault();
-      setError('sections', `${sectionType.toUpperCase()} section already exists. Only one ${sectionType.toUpperCase()} section is allowed per template.`);
+      const sectionName = sectionType.toUpperCase();
+      setError('sections', `${sectionName} section already exists. Only one ${sectionName} section is allowed per template.`);
       return;
     }
     
@@ -113,12 +120,13 @@ const DragDropTemplateModal: React.FC<DragDropTemplateModalProps> = ({
     
     if (!draggedSectionType) return;
 
-    // Additional check to prevent dropping CC/BCC if they already exist
+    // Additional check to prevent dropping CC/BCC/Link if they already exist
     if ((draggedSectionType === 'cc' || draggedSectionType === 'bcc') && 
         template.sections.some((section: any) => section.type === draggedSectionType)) {
       setDraggedSectionType(null);
       setIsDragging(false);
-      setError('sections', `${draggedSectionType.toUpperCase()} section already exists. Only one ${draggedSectionType.toUpperCase()} section is allowed per template.`);
+      const sectionName = draggedSectionType.toUpperCase();
+      setError('sections', `${sectionName} section already exists. Only one ${sectionName} section is allowed per template.`);
       return;
     }
 
@@ -201,8 +209,6 @@ const DragDropTemplateModal: React.FC<DragDropTemplateModalProps> = ({
 
   const handleSave = async () => {
     try {
-      console.log("Saving template with data:", template);
-      
       // Ensure template name is not empty
       if (!template.template_name || template.template_name.trim() === '' || template.template_name === 'Custom Template') {
         setError('templateName', 'Please enter a template name');
@@ -222,9 +228,6 @@ const DragDropTemplateModal: React.FC<DragDropTemplateModalProps> = ({
           template_name: template.template_name
         }
       };
-      
-      console.log("Template data being passed:", templateData);
-      console.log("Template name:", templateData.template_name);
       
       // Pass the template data to the parent component
       // The parent will handle the complete workflow (content type + template creation)
@@ -317,97 +320,73 @@ const DragDropTemplateModal: React.FC<DragDropTemplateModalProps> = ({
   const renderSectionContent = (section: any) => {
     switch (section.type) {
       case 'text':
-        const textConfig = section.config as TTextConfig;
         return (
           <div className="text-preview">
             <div className="section-label">
-              <strong>📝 {textConfig.label || 'Text Section'}</strong>
-              {textConfig.required && <span className="required-badge">*</span>}
-            </div>
-            <div className="section-description">
-              {textConfig.description || 'Rich text content will be entered here'}
+              <strong>📝 Text Section</strong>
             </div>
             <div className="section-placeholder">
-              [Text content placeholder - {textConfig.contentType || 'paragraph'}]
+              [Text content will be configured here]
             </div>
           </div>
         );
       
       case 'image':
-        const imageConfig = section.config as TImageConfig;
         return (
           <div className="image-preview">
             <div className="section-label">
-              <strong>🖼️ {imageConfig.label || 'Image Section'}</strong>
-              {imageConfig.required && <span className="required-badge">*</span>}
+              <strong>🖼️ Image Section</strong>
             </div>
-            <div className="section-description">
-              {imageConfig.description || 'Image will be uploaded here'}
-            </div>
-            <div className="image-placeholder">
-              <div className="placeholder-content">
-                🖼️ Image placeholder
-                {imageConfig.maxWidth && imageConfig.maxHeight && (
-                  <div className="constraints">Max: {imageConfig.maxWidth}x{imageConfig.maxHeight}px</div>
-                )}
-              </div>
+            <div className="section-placeholder">
+              [Image from Contentstack assets will be configured here]
             </div>
           </div>
         );
       
       case 'file':
-        const fileConfig = section.config as TFileConfig;
         return (
           <div className="file-preview">
             <div className="section-label">
-              <strong>📎 {fileConfig.label || 'File Section'}</strong>
-              {fileConfig.required && <span className="required-badge">*</span>}
+              <strong>📎 File Section</strong>
             </div>
-            <div className="section-description">
-              {fileConfig.description || 'File attachment will be added here'}
+            <div className="section-placeholder">
+              [File from Contentstack assets will be configured here]
             </div>
-            <div className="file-placeholder">
-              📎 File attachment placeholder
-              {fileConfig.allowedTypes && (
-                <div className="constraints">Types: {fileConfig.allowedTypes.join(', ')}</div>
-              )}
-              {fileConfig.maxSize && (
-                <div className="constraints">Max size: {fileConfig.maxSize}</div>
-              )}
+          </div>
+        );
+      
+      case 'link':
+        return (
+          <div className="link-preview">
+            <div className="section-label">
+              <strong>🔗 Link Section</strong>
+            </div>
+            <div className="section-placeholder">
+              [Link with text and URL will be configured here]
             </div>
           </div>
         );
       
       case 'cc':
-        const ccConfig = section.config as TCCConfig;
         return (
           <div className="cc-preview">
             <div className="section-label">
-              <strong>👥 {ccConfig.label || 'CC Section'}</strong>
-              {ccConfig.required && <span className="required-badge">*</span>}
-            </div>
-            <div className="section-description">
-              {ccConfig.description || 'Carbon copy recipients will be added here'}
+              <strong>👥 CC Section</strong>
             </div>
             <div className="section-placeholder">
-              [CC recipients placeholder]
+              [CC recipients will be configured here]
             </div>
           </div>
         );
       
       case 'bcc':
-        const bccConfig = section.config as TBCCConfig;
         return (
           <div className="bcc-preview">
             <div className="section-label">
-              <strong>👤 {bccConfig.label || 'BCC Section'}</strong>
-              {bccConfig.required && <span className="required-badge">*</span>}
-            </div>
-            <div className="section-description">
-              {bccConfig.description || 'Blind carbon copy recipients will be added here'}
+              <strong>👤 BCC Section</strong>
             </div>
             <div className="section-placeholder">
-              [BCC recipients placeholder]
+              [BCC recipients will be configured here]
             </div>
           </div>
         );
@@ -438,41 +417,16 @@ const DragDropTemplateModal: React.FC<DragDropTemplateModalProps> = ({
         {/* Separator */}
         <div className="properties-separator"></div>
         
-        {/* Section-specific properties or general settings */}
-        {!selectedSectionId ? (
-          <div className="template-settings-section">
-            <h3>Template Settings</h3>
-            <p className="settings-hint">Select a section to edit its properties, or drag new sections from the library.</p>
-          </div>
-        ) : (
-          <div className="section-properties-section">
-            <h3>Section Properties</h3>
-                      {(() => {
-            const selectedSection = template.sections.find((s: any) => s.id === selectedSectionId);
-            return selectedSection ? renderSectionProperties(selectedSection) : null;
-          })()}
+        {/* Simple schema creation message */}
+        <div className="template-settings-section">
+          <h3>Schema Creation</h3>
+          <p className="settings-hint">Add sections to create the email template schema. Section properties will be configured later.</p>
         </div>
-      )}
-    </div>
-  );
-};
-
-const renderSectionProperties = (section: any) => {
-    switch (section.type) {
-      case 'text':
-        return <TextProperties section={section} onChange={handleSectionConfigChange} />;
-      case 'image':
-        return <ImageProperties section={section} onChange={handleSectionConfigChange} />;
-      case 'file':
-        return <FileProperties section={section} onChange={handleSectionConfigChange} />;
-      case 'cc':
-        return <CCProperties section={section} onChange={handleSectionConfigChange} />;
-      case 'bcc':
-        return <BCCProperties section={section} onChange={handleSectionConfigChange} />;
-      default:
-        return <div>Properties for {section.type} not implemented yet</div>;
-    }
+      </div>
+    );
   };
+
+
 
   if (!isOpen) return null;
 
@@ -513,7 +467,7 @@ const renderSectionProperties = (section: any) => {
               <h3>Miscellaneous</h3>
               <div className="section-items">
                 {MISCELLANEOUS_SECTIONS.map(item => {
-                  const isAlreadyAdded = (item.type === 'cc' || item.type === 'bcc') && 
+                  const isAlreadyAdded = (item.type === 'cc' || item.type === 'bcc' || item.type === 'link') && 
                     template.sections.some((section: any) => section.type === item.type);
                   
                   return (
@@ -580,331 +534,6 @@ const renderSectionProperties = (section: any) => {
   );
 };
 
-// Property components for different section types
 
-const TextProperties: React.FC<{ section: TTemplateSection; onChange: (id: string, config: any) => void }> = ({ section, onChange }) => {
-  const config = section.config as TTextConfig;
-  
-  return (
-    <div className="property-groups">
-      <div className="property-group">
-        <label>Section Label</label>
-        <input
-          type="text"
-          value={config.label}
-          onChange={(e) => onChange(section.id, { ...config, label: e.target.value })}
-          placeholder="Enter section label"
-        />
-      </div>
-      <div className="property-group">
-        <label>Description</label>
-        <textarea
-          value={config.description || ''}
-          onChange={(e) => onChange(section.id, { ...config, description: e.target.value })}
-          placeholder="Describe what content goes here"
-          rows={2}
-        />
-      </div>
-      <div className="property-group">
-        <label>Content Type</label>
-        <select
-          value={config.contentType}
-          onChange={(e) => onChange(section.id, { ...config, contentType: e.target.value })}
-        >
-          <option value="paragraph">Paragraph</option>
-          <option value="heading">Heading</option>
-          <option value="list">List</option>
-          <option value="quote">Quote</option>
-        </select>
-      </div>
-      <div className="property-group">
-        <label>
-          <input
-            type="checkbox"
-            checked={config.required}
-            onChange={(e) => onChange(section.id, { ...config, required: e.target.checked })}
-          />
-          Required Field
-        </label>
-      </div>
-      <div className="property-group">
-        <label>Default Font Size</label>
-        <input
-          type="number"
-          value={config.fontSize}
-          onChange={(e) => onChange(section.id, { ...config, fontSize: parseInt(e.target.value) })}
-          min="8"
-          max="72"
-        />
-      </div>
-      <div className="property-group">
-        <label>Default Text Color</label>
-        <input
-          type="color"
-          value={config.textColor}
-          onChange={(e) => onChange(section.id, { ...config, textColor: e.target.value })}
-        />
-      </div>
-      <div className="property-group">
-        <label>Default Alignment</label>
-        <select
-          value={config.alignment}
-          onChange={(e) => onChange(section.id, { ...config, alignment: e.target.value })}
-        >
-          <option value="left">Left</option>
-          <option value="center">Center</option>
-          <option value="right">Right</option>
-        </select>
-      </div>
-    </div>
-  );
-};
-
-const ImageProperties: React.FC<{ section: TTemplateSection; onChange: (id: string, config: any) => void }> = ({ section, onChange }) => {
-  const config = section.config as TImageConfig;
-  
-  return (
-    <div className="property-groups">
-      <div className="property-group">
-        <label>Section Label</label>
-        <input
-          type="text"
-          value={config.label}
-          onChange={(e) => onChange(section.id, { ...config, label: e.target.value })}
-          placeholder="Enter section label"
-        />
-      </div>
-      <div className="property-group">
-        <label>Description</label>
-        <textarea
-          value={config.description || ''}
-          onChange={(e) => onChange(section.id, { ...config, description: e.target.value })}
-          placeholder="Describe what image goes here"
-          rows={2}
-        />
-      </div>
-      <div className="property-group">
-        <label>
-          <input
-            type="checkbox"
-            checked={config.required}
-            onChange={(e) => onChange(section.id, { ...config, required: e.target.checked })}
-          />
-          Required Field
-        </label>
-      </div>
-      <div className="property-group">
-        <label>Max Width (px)</label>
-        <input
-          type="number"
-          value={config.maxWidth || ''}
-          onChange={(e) => onChange(section.id, { ...config, maxWidth: parseInt(e.target.value) || undefined })}
-          placeholder="Optional"
-        />
-      </div>
-      <div className="property-group">
-        <label>Max Height (px)</label>
-        <input
-          type="number"
-          value={config.maxHeight || ''}
-          onChange={(e) => onChange(section.id, { ...config, maxHeight: parseInt(e.target.value) || undefined })}
-          placeholder="Optional"
-        />
-      </div>
-      <div className="property-group">
-        <label>Allowed Types</label>
-        <input
-          type="text"
-          value={config.allowedTypes?.join(', ') || ''}
-          onChange={(e) => onChange(section.id, { ...config, allowedTypes: e.target.value.split(',').map(t => t.trim()).filter(t => t) })}
-          placeholder="jpg, png, gif, webp"
-        />
-      </div>
-      <div className="property-group">
-        <label>Default Alignment</label>
-        <select
-          value={config.alignment}
-          onChange={(e) => onChange(section.id, { ...config, alignment: e.target.value })}
-        >
-          <option value="left">Left</option>
-          <option value="center">Center</option>
-          <option value="right">Right</option>
-        </select>
-      </div>
-      <div className="property-group">
-        <label>
-          <input
-            type="checkbox"
-            checked={config.clickable}
-            onChange={(e) => onChange(section.id, { ...config, clickable: e.target.checked })}
-          />
-          Allow linking
-        </label>
-      </div>
-    </div>
-  );
-};
-
-const FileProperties: React.FC<{ section: TTemplateSection; onChange: (id: string, config: any) => void }> = ({ section, onChange }) => {
-  const config = section.config as TFileConfig;
-  
-  return (
-    <div className="property-groups">
-      <div className="property-group">
-        <label>Section Label</label>
-        <input
-          type="text"
-          value={config.label}
-          onChange={(e) => onChange(section.id, { ...config, label: e.target.value })}
-          placeholder="Enter section label"
-        />
-      </div>
-      <div className="property-group">
-        <label>Description</label>
-        <textarea
-          value={config.description || ''}
-          onChange={(e) => onChange(section.id, { ...config, description: e.target.value })}
-          placeholder="Describe what file goes here"
-          rows={2}
-        />
-      </div>
-      <div className="property-group">
-        <label>
-          <input
-            type="checkbox"
-            checked={config.required}
-            onChange={(e) => onChange(section.id, { ...config, required: e.target.checked })}
-          />
-          Required Field
-        </label>
-      </div>
-      <div className="property-group">
-        <label>Allowed File Types</label>
-        <input
-          type="text"
-          value={config.allowedTypes?.join(', ') || ''}
-          onChange={(e) => onChange(section.id, { ...config, allowedTypes: e.target.value.split(',').map(t => t.trim()).filter(t => t) })}
-          placeholder="pdf, doc, docx, xls, xlsx, txt"
-        />
-      </div>
-      <div className="property-group">
-        <label>Max File Size</label>
-        <input
-          type="text"
-          value={config.maxSize || ''}
-          onChange={(e) => onChange(section.id, { ...config, maxSize: e.target.value })}
-          placeholder="e.g., 10MB"
-        />
-      </div>
-      <div className="property-group">
-        <label>Default File Type</label>
-        <select
-          value={config.fileType || 'pdf'}
-          onChange={(e) => onChange(section.id, { ...config, fileType: e.target.value })}
-        >
-          <option value="pdf">PDF</option>
-          <option value="doc">Document</option>
-          <option value="xls">Spreadsheet</option>
-          <option value="txt">Text</option>
-          <option value="other">Other</option>
-        </select>
-      </div>
-    </div>
-  );
-};
-
-const CCProperties: React.FC<{ section: TTemplateSection; onChange: (id: string, config: any) => void }> = ({ section, onChange }) => {
-  const config = section.config as TCCConfig;
-  
-  return (
-    <div className="property-groups">
-      <div className="property-group">
-        <label>Section Label</label>
-        <input
-          type="text"
-          value={config.label}
-          onChange={(e) => onChange(section.id, { ...config, label: e.target.value })}
-          placeholder="Enter section label"
-        />
-      </div>
-      <div className="property-group">
-        <label>Description</label>
-        <textarea
-          value={config.description || ''}
-          onChange={(e) => onChange(section.id, { ...config, description: e.target.value })}
-          placeholder="Describe what CC recipients go here"
-          rows={2}
-        />
-      </div>
-      <div className="property-group">
-        <label>
-          <input
-            type="checkbox"
-            checked={config.required}
-            onChange={(e) => onChange(section.id, { ...config, required: e.target.checked })}
-          />
-          Required Field
-        </label>
-      </div>
-      <div className="property-group">
-        <label>
-          <input
-            type="checkbox"
-            checked={config.showInEmail || false}
-            onChange={(e) => onChange(section.id, { ...config, showInEmail: e.target.checked })}
-          />
-          Show CC in email
-        </label>
-      </div>
-    </div>
-  );
-};
-
-const BCCProperties: React.FC<{ section: TTemplateSection; onChange: (id: string, config: any) => void }> = ({ section, onChange }) => {
-  const config = section.config as TBCCConfig;
-  
-  return (
-    <div className="property-groups">
-      <div className="property-group">
-        <label>Section Label</label>
-        <input
-          type="text"
-          value={config.label}
-          onChange={(e) => onChange(section.id, { ...config, label: e.target.value })}
-          placeholder="Enter section label"
-        />
-      </div>
-      <div className="property-group">
-        <label>Description</label>
-        <textarea
-          value={config.description || ''}
-          onChange={(e) => onChange(section.id, { ...config, description: e.target.value })}
-          placeholder="Describe what BCC recipients go here"
-          rows={2}
-        />
-      </div>
-      <div className="property-group">
-        <label>
-          <input
-            type="checkbox"
-            checked={config.required}
-            onChange={(e) => onChange(section.id, { ...config, required: e.target.checked })}
-          />
-          Required Field
-        </label>
-      </div>
-      <div className="property-group">
-        <label>
-          <input
-            type="checkbox"
-            checked={config.hideFromRecipients || true}
-            onChange={(e) => onChange(section.id, { ...config, hideFromRecipients: e.target.checked })}
-          />
-          Hide from recipients
-        </label>
-      </div>
-    </div>
-  );
-};
 
 export default DragDropTemplateModal; 

@@ -1,7 +1,7 @@
 /* SendEmail Component Styles */
 
 .send-email-container {
-  min-width: 800px;
+  width: 1200px;
   margin: 70px 0px;
   padding: 32px;
   background-color: #ffffff;

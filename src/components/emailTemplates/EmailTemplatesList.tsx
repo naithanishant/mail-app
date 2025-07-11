@@ -1,36 +1,31 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import '../../styles/EmailTemplatesList.css';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../../store';
-import { createDragDropTemplateWithContentType, createEmailTemplate, createTemplateContentType } from '../../api/index';
-import { TCreateEmailTemplateInput, TCreateCustomTemplateInput } from '../../types/index';
-import AddEmailTemplateModal from './components/AddEmailTemplateModal';
+import { createTemplateContentType, fetchCustomTemplatesData } from '../../api/index';
+import { TCreateCustomTemplateInput } from '../../types/index';
 import DragDropTemplateModal from './components/DragDropTemplateModal';
-import { truncateRTEContent } from '../../utils/rteUtils';
 
-interface EmailTemplate {
+interface CustomTemplate {
   uid: string;
-  template_name: string;
-  template_subject: string;
-  template_body: string;
-  active: boolean;
+  title: string;
+  description: string;
+  created_at: string;
+  updated_at: string;
+  schema: any[];
 }
 
 const EmailTemplatesList: React.FC<any> = () => {
-  const emailTemplates = useSelector((state: RootState) => state.main.emailTemplates);
+  const customTemplates = useSelector((state: RootState) => state.main.customTemplates);
   const dispatch = useDispatch();
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDragDropModalOpen, setIsDragDropModalOpen] = useState(false);
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
-  const [selectedTemplate, setSelectedTemplate] = useState<EmailTemplate | null>(null);
+  const [selectedTemplate, setSelectedTemplate] = useState<CustomTemplate | null>(null);
 
-  const handleOpenModal = () => {
-    setIsModalOpen(true);
-  };
-
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-  };
+  // Fetch custom templates on component mount
+  useEffect(() => {
+    fetchCustomTemplatesData(dispatch);
+  }, [dispatch]);
 
   const handleOpenDragDropModal = () => {
     setIsDragDropModalOpen(true);
@@ -40,7 +35,7 @@ const EmailTemplatesList: React.FC<any> = () => {
     setIsDragDropModalOpen(false);
   };
 
-  const handleViewTemplate = (template: EmailTemplate) => {
+  const handleViewTemplate = (template: CustomTemplate) => {
     setSelectedTemplate(template);
     setIsViewModalOpen(true);
   };
@@ -50,45 +45,33 @@ const EmailTemplatesList: React.FC<any> = () => {
     setSelectedTemplate(null);
   };
 
-  // Using shared RTE utility for consistent content handling
-
-  // Handle regular template creation (with subject)
-  const handleAddTemplate = async (templateData: TCreateEmailTemplateInput) => {
+  // Handle custom drag-drop template creation
+  const handleDragDropTemplate = async (templateData: TCreateCustomTemplateInput) => {
     try {
-      console.log("Adding regular template with data:", templateData);
-      
-      await createEmailTemplate(dispatch, { entry: templateData });
-      console.log("Regular template created successfully");
-      
+      await createTemplateContentType(templateData.dragDropData);
+      // Refresh custom templates list after creation
+      fetchCustomTemplatesData(dispatch);
     } catch (error) {
-      console.error('Error creating regular email template:', error);
+      console.error('Error creating custom template:', error);
       alert(`Failed to create template: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   };
 
-  // Handle custom drag-drop template creation (template name only)
-  const handleDragDropTemplate = async (templateData: any) => {
-    console.log("templateData", templateData);
-    
-    try {
-      await createTemplateContentType(templateData)
-    } catch (error) {
-      console.error('Error creating drag-drop template:', error);
-      alert(`Failed to create template: ${error instanceof Error ? error.message : 'Unknown error'}`);
-    }
+  // Format date for display
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString();
+  };
+
+  // Get field count for template preview
+  const getFieldCount = (schema: any[]) => {
+    return schema ? schema.length : 0;
   };
 
   return (
     <div className="email-templates-list-container">
       <div className="email-templates-list-header">
-        <h1>Email Templates Management</h1>
+        <h1>Custom Email Templates</h1>
         <div className="header-buttons">
-          <button
-            onClick={handleOpenModal}
-            className="add-template-button"
-          >
-            + Add Simple Template
-          </button>
           <button
             onClick={handleOpenDragDropModal}
             className="add-custom-template-button"
@@ -98,17 +81,11 @@ const EmailTemplatesList: React.FC<any> = () => {
         </div>
       </div>
 
-      {emailTemplates.length === 0 ? (
+      {!customTemplates || customTemplates.length === 0 ? (
         <div className="no-templates-container">
-          <h3 className="no-templates-title">No email templates found</h3>
-          <p className="no-templates-description">Get started by adding your first email template</p>
+          <h3 className="no-templates-title">No custom templates found</h3>
+          <p className="no-templates-description">Get started by creating your first custom email template</p>
           <div className="first-template-buttons">
-            <button
-              onClick={handleOpenModal}
-              className="add-first-template-button"
-            >
-              Add Simple Template
-            </button>
             <button
               onClick={handleOpenDragDropModal}
               className="add-first-custom-template-button"
@@ -119,23 +96,29 @@ const EmailTemplatesList: React.FC<any> = () => {
         </div>
       ) : (
         <div className="templates-grid">
-          {emailTemplates.map((template, index) => (
+          {customTemplates.map((template: CustomTemplate, index: number) => (
             <div
-              key={`template-card-${index}`}
+              key={`custom-template-${template.uid}-${index}`}
               className="template-card clickable"
               onClick={() => handleViewTemplate(template)}
             >
               <div className="template-card-content">
                 <div className="template-details">
                   <h3 className="template-name">
-                    {template.template_name}
+                    {template.title}
                   </h3>
-                  <p className="template-body">
-                    <strong>Body:</strong> {truncateRTEContent(template.template_body, 100)}
+                  <p className="template-description">
+                    <strong>Description:</strong> {template.description || 'No description'}
+                  </p>
+                  <p className="template-fields">
+                    <strong>Fields:</strong> {getFieldCount(template.schema)} custom fields
+                  </p>
+                  <p className="template-created">
+                    <strong>Created:</strong> {formatDate(template.created_at)}
                   </p>
                 </div>
-                <div className={`active-badge ${template.active ? 'active' : 'inactive'}`}>
-                  {template.active ? 'ACTIVE' : 'INACTIVE'}
+                <div className="active-badge active">
+                  CUSTOM
                 </div>
               </div>
             </div>
@@ -143,17 +126,11 @@ const EmailTemplatesList: React.FC<any> = () => {
         </div>
       )}
 
-      {emailTemplates.length > 0 && (
+      {customTemplates && customTemplates.length > 0 && (
         <div className="templates-count">
-          Total Templates: {emailTemplates.length}
+          Total Custom Templates: {customTemplates.length}
         </div>
       )}
-
-      <AddEmailTemplateModal
-        isOpen={isModalOpen}
-        onClose={handleCloseModal}
-        onAddTemplate={handleAddTemplate}
-      />
 
       <DragDropTemplateModal
         isOpen={isDragDropModalOpen}
@@ -162,13 +139,42 @@ const EmailTemplatesList: React.FC<any> = () => {
       />
       
       {selectedTemplate && (
-        <AddEmailTemplateModal
-          isOpen={isViewModalOpen}
-          onClose={handleCloseViewModal}
-          onAddTemplate={() => {}} // No-op for view mode
-          isViewMode={true}
-          templateData={selectedTemplate}
-        />
+        <div className="template-view-modal">
+          <div className="template-view-content">
+            <div className="template-view-header">
+              <h2>{selectedTemplate.title}</h2>
+              <button 
+                onClick={handleCloseViewModal}
+                className="close-button"
+              >
+                ×
+              </button>
+            </div>
+            <div className="template-view-body">
+              <p><strong>Description:</strong> {selectedTemplate.description || 'No description'}</p>
+              <p><strong>UID:</strong> {selectedTemplate.uid}</p>
+              <p><strong>Created:</strong> {formatDate(selectedTemplate.created_at)}</p>
+              <p><strong>Updated:</strong> {formatDate(selectedTemplate.updated_at)}</p>
+              <div className="template-schema">
+                <h4>Template Fields ({getFieldCount(selectedTemplate.schema)}):</h4>
+                {selectedTemplate.schema && selectedTemplate.schema.length > 0 ? (
+                  <ul className="schema-list">
+                    {selectedTemplate.schema.map((field: any, index: number) => (
+                      <li key={`field-${index}`} className="schema-item">
+                        <strong>{field.display_name}</strong> ({field.data_type})
+                        {field.field_metadata?.description && (
+                          <span className="field-description"> - {field.field_metadata.description}</span>
+                        )}
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p>No fields defined for this template.</p>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

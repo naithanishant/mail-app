@@ -4,11 +4,12 @@ This document explains the drag-and-drop email template schema system, designed 
 
 ## Overview
 
-The email template system supports **5 core section types** that cover all essential email composition needs:
+The email template system supports **6 core section types** that cover all essential email composition needs:
 
 - **Text** - Rich text content with formatting options
 - **Image** - Image display with sizing and alignment controls
 - **File** - File attachments with metadata
+- **Link** - Clickable links with text and URL configuration
 - **CC** - Carbon copy recipients management
 - **BCC** - Blind carbon copy recipients management
 
