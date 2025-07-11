@@ -1,4 +1,5 @@
 import Contentstack from "contentstack";
+import * as ManagementStack from "@contentstack/management";
 
 export const initializeContentstackSdk = () => {
   const {
@@ -42,3 +43,21 @@ export const initializeContentstackSdk = () => {
   });
   return Stack;
 };
+
+
+export const initializeContentstackManagementSdk = () => {
+  const {
+    REACT_APP_CONTENTSTACK_API_KEY,
+    REACT_APP_CONTENTSTACK_AUTH_TOKEN,
+    REACT_APP_CONTENTSTACK_MANAGEMENT_TOKEN
+  } = process.env;
+
+  const stack = ManagementStack.client({
+    authtoken: REACT_APP_CONTENTSTACK_AUTH_TOKEN as string,
+  }).stack({
+    api_key: REACT_APP_CONTENTSTACK_API_KEY as string,
+    management_token: REACT_APP_CONTENTSTACK_MANAGEMENT_TOKEN as string,
+  });
+
+  return stack;
+}

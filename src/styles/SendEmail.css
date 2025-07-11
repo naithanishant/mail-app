@@ -1,8 +1,8 @@
 /* SendEmail Component Styles */
 
 .send-email-container {
-  max-width: 800px;
-  margin: 70px 0 0 0;
+  width: 1200px;
+  margin: 70px 0px;
   padding: 32px;
   background-color: #ffffff;
   border-radius: 16px;
@@ -259,54 +259,34 @@
   color: #dc3545;
 }
 
-/* Rich Text Editor Styles */
-.quill-container {
-  border: 2px solid #e5e5e5;
-  border-radius: 8px;
-  overflow: hidden;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+/* Rich Text Editor Styles are now handled by the shared RichTextEditor component */
+
+/* Template Selection Styles */
+.template-select {
+  background-color: #ffffff;
+  background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 4 5"><path fill="%23666" d="M2 0L0 2h4zm0 5L0 3h4z"/></svg>');
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 12px;
+  padding-right: 40px;
+  cursor: pointer;
 }
 
-.quill-container:focus-within {
+.template-select:focus {
+  outline: none;
   border-color: #3822aa;
   box-shadow: 0 0 0 3px rgba(56, 34, 170, 0.1);
 }
 
-.quill-container.error {
-  border-color: #dc3545;
-}
-
-.quill-container.error:focus-within {
-  border-color: #dc3545;
-  box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);
-}
-
-.quill-container .ql-toolbar {
-  border: none;
-  border-bottom: 1px solid #e5e5e5;
-  background-color: #f8f9fa;
+.template-info {
+  margin-top: 8px;
   padding: 12px;
-}
-
-.quill-container .ql-container {
-  border: none;
-  font-size: 16px;
-  line-height: 1.6;
-  min-height: 200px;
-}
-
-.quill-container .ql-editor {
-  padding: 16px;
-  min-height: 200px;
-}
-
-.quill-container .ql-editor.ql-blank::before {
-  color: #aaa;
-  font-style: italic;
-  font-size: 16px;
-  line-height: 1.6;
-  left: 16px;
-  right: 16px;
+  background-color: #e8f4fd;
+  border: 1px solid #b8daff;
+  border-radius: 6px;
+  color: #0056b3;
+  font-size: 14px;
+  line-height: 1.4;
 }
 
 /* Submit Button Styles */
@@ -397,13 +377,11 @@
     font-size: 13px;
   }
 
-  .quill-container .ql-container {
-    min-height: 150px;
-  }
-
-  .quill-container .ql-editor {
-    padding: 12px;
-    min-height: 150px;
+  /* RTE responsive styles are now handled by the shared RichTextEditor component */
+  
+  .template-info {
+    padding: 10px;
+    font-size: 13px;
   }
 
   .send-button {
@@ -453,17 +431,11 @@
     font-size: 12px;
   }
 
-  .quill-container .ql-toolbar {
+  /* RTE responsive styles for smaller screens are now handled by the shared RichTextEditor component */
+  
+  .template-info {
     padding: 8px;
-  }
-
-  .quill-container .ql-container {
-    min-height: 120px;
-  }
-
-  .quill-container .ql-editor {
-    padding: 10px;
-    min-height: 120px;
+    font-size: 12px;
   }
 
   .send-button {

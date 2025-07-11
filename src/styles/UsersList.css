@@ -1,6 +1,6 @@
 .users-list-container {
-  max-width: 800px;
-  margin: 0 auto;
+  min-width: 1200px;
+  margin: 70px 0px;
   padding: 20px;
 }
 

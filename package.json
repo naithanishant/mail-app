@@ -7,7 +7,6 @@
   "dependencies": {
     "@contentstack/management": "^1.21.7",
     "@contentstack/venus-components": "3.0.0",
-    "@mailchimp/mailchimp_marketing": "^3.0.80",
     "@reduxjs/toolkit": "^2.2.1",
     "@sendgrid/mail": "^7.7.0",
     "@testing-library/jest-dom": "^5.17.0",

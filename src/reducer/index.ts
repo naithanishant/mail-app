@@ -1,15 +1,9 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-<<<<<<< Updated upstream
-import { THeaderData, TUsersData } from "../types";
-=======
 import { THeaderData, TUsersData, TEmailTemplateData, TUsersPaginationData } from "../types";
->>>>>>> Stashed changes
 
 interface AppState {
   headerData: THeaderData;
   usersData: TUsersData[];
-<<<<<<< Updated upstream
-=======
   usersPagination: {
     currentPage: number;
     totalPages: number;
@@ -19,7 +13,7 @@ interface AppState {
     hasPreviousPage: boolean;
   };
   emailTemplates: TEmailTemplateData[];
->>>>>>> Stashed changes
+  customTemplates: any;
 }
 
 const initialState: AppState = {
@@ -37,16 +31,6 @@ const initialState: AppState = {
       ],
     },
   },
-<<<<<<< Updated upstream
-  usersData: [
-    {
-      first_name: "",
-      last_name: "",
-      email: "",
-      subscribed: false,
-    }
-  ],
-=======
   usersData: [],
   usersPagination: {
     currentPage: 1,
@@ -56,8 +40,8 @@ const initialState: AppState = {
     hasNextPage: false,
     hasPreviousPage: false,
   },
-  emailTemplates: []
->>>>>>> Stashed changes
+  emailTemplates: [],
+  customTemplates: []
 };
 
 const mainSlice = createSlice({
@@ -70,8 +54,6 @@ const mainSlice = createSlice({
     setUsersData: (state, action: PayloadAction<TUsersData[]>) => {
       state.usersData = action.payload;
     },
-<<<<<<< Updated upstream
-=======
     setUsersPaginationData: (state, action: PayloadAction<TUsersPaginationData>) => {
       state.usersData = action.payload.users;
       state.usersPagination = action.payload.pagination;
@@ -90,20 +72,20 @@ const mainSlice = createSlice({
       const templates = [action.payload, ...state.emailTemplates];
       state.emailTemplates = templates;
     },
->>>>>>> Stashed changes
+    setCustomTemplatesData: (state, action: PayloadAction<any>) => {
+      state.customTemplates = action.payload;
+    },
   },
 });
 
 export const {
   setHeaderData,
   setUsersData,
-<<<<<<< Updated upstream
-=======
   setUsersPaginationData,
   addUserData,
   setEmailTemplatesData,
   addEmailTemplateData,
->>>>>>> Stashed changes
+  setCustomTemplatesData,
 } = mainSlice.actions;
 
 export default mainSlice.reducer;

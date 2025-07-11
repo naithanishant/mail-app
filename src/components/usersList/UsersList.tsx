@@ -1,16 +1,9 @@
-<<<<<<< Updated upstream
-import React from 'react';
-=======
 import React, { useState, useEffect } from 'react';
->>>>>>> Stashed changes
 import '../../styles/UsersList.css';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch, } from 'react-redux';
 import { RootState } from '../../store';
-<<<<<<< Updated upstream
-=======
 import { createUser, fetchUsersData } from '../../api';
 import AddUserModal from './components/AddUserModal';
->>>>>>> Stashed changes
 
 interface User {
   id: string;
@@ -22,15 +15,7 @@ interface User {
   created_at: string;
 }
 
-interface UsersListProps {
-  users: User[];
-  onAddUser: () => void;
-}
-
 const UsersList: React.FC<any> = () => {
-<<<<<<< Updated upstream
-  const users = useSelector((state: RootState) => state.main.usersData);
-=======
   const { usersData, usersPagination } = useSelector((state: RootState) => state.main);
   const dispatch = useDispatch();
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -54,13 +39,9 @@ const UsersList: React.FC<any> = () => {
     };
 
     try {
-      // Use the API function to create user in Contentstack
       await createUser(dispatch, { entry: newUser });
-      // Refresh the first page to show the new user
-      await fetchUsersData(dispatch, 1, usersPagination.limit);
     } catch (error) {
       console.error('Error creating user:', error);
-      // You might want to show an error message to the user here
     }
   };
 
@@ -124,13 +105,12 @@ const UsersList: React.FC<any> = () => {
   const startIndex = (usersPagination.currentPage - 1) * usersPagination.limit;
   const endIndex = Math.min(startIndex + usersData.length, usersPagination.totalCount);
 
->>>>>>> Stashed changes
   return (
     <div className="users-list-container">
       <div className="users-list-header">
         <h1>Users Management</h1>
         <button
-          // onClick={onAddUser}
+          onClick={handleOpenModal}
           className="add-user-button"
         >
           + Add New User
@@ -142,35 +122,13 @@ const UsersList: React.FC<any> = () => {
           <h3 className="no-users-title">No users found</h3>
           <p className="no-users-description">Get started by adding your first user</p>
           <button
-            // onClick={onAddUser}
+            onClick={handleOpenModal}
             className="add-first-user-button"
           >
             Add First User
           </button>
         </div>
       ) : (
-<<<<<<< Updated upstream
-        <div className="users-grid">
-          {users.map((user, index) => (
-            <div
-              key={`user-card-${index}`}
-              className="user-card"
-            >
-              <div className="user-card-content">
-                <div className="user-details">
-                  <h3 className="user-name">
-                    {user.first_name} {user.last_name}
-                  </h3>
-                  <p className="user-email">
-                    <strong>Email:</strong> {user.email}
-                  </p>
-                  <p className="user-subscription">
-                    <strong>Newsletter:</strong> {user.subscribed ? 'Subscribed' : 'Not Subscribed'}
-                  </p>
-                </div>
-                <div className={`subscription-badge ${user.subscribed ? 'subscribed' : 'not-subscribed'}`}>
-                  {user.subscribed ? 'SUBSCRIBED' : 'NOT SUBSCRIBED'}
-=======
         <>
           <div className="users-grid">
             {usersData.map((user, index) => (
@@ -190,7 +148,6 @@ const UsersList: React.FC<any> = () => {
                   <div className={`subscription-badge ${user.subscribed ? 'subscribed' : 'not-subscribed'}`}>
                     {user.subscribed ? 'SUBSCRIBED' : 'NOT SUBSCRIBED'}
                   </div>
->>>>>>> Stashed changes
                 </div>
               </div>
             ))}
@@ -251,6 +208,12 @@ const UsersList: React.FC<any> = () => {
           Total Users: {usersPagination.totalCount}
         </div>
       )}
+
+      <AddUserModal
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        onAddUser={handleAddUser}
+      />
     </div>
   );
 };

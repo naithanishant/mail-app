@@ -2,24 +2,20 @@ import { Dispatch } from "react";
 import { CONTENT_TYPES } from "../constants";
 import {
   setHeaderData,
-<<<<<<< Updated upstream
-  setUsersData
-} from "../reducer";
-import { initializeContentstackSdk } from "../sdk/utils";
-=======
   setUsersData,
   setUsersPaginationData,
   addUserData,
   setEmailTemplatesData,
   addEmailTemplateData,
+  setCustomTemplatesData,
 } from "../reducer";
 import { TUsersPaginationData } from "../types";
-import { initializeContentstackSdk, initContentstackManagementSdk } from "../sdk/utils";
->>>>>>> Stashed changes
+import { initializeContentstackSdk, initializeContentstackManagementSdk } from "../sdk/utils";
 import * as Utils from "@contentstack/utils";
 import { TCreateEmailTemplateInput, TCreateCustomTemplateInput } from "../types";
 
 const Stack = initializeContentstackSdk();
+const ManagementStack = initializeContentstackManagementSdk();
 
 type GetEntryByUrl = {
   entryUrl: string | undefined;
@@ -111,8 +107,6 @@ export const getEntryByUrl = ({
   });
 };
 
-<<<<<<< Updated upstream
-=======
 const publishEntry = (contentTypeUid: string, entryData: any) => {
   return new Promise((resolve, reject) => {
     ManagementStack.contentType(contentTypeUid).entry(entryData.uid).publish(entryData).then((result) => {
@@ -133,14 +127,12 @@ export const createEntry = ({
   return new Promise((resolve, reject) => {
     ManagementStack.contentType(contentTypeUid).entry().create(entryData).then((result) => {
       resolve(result);
-      // await 
     }).catch((error) => {
       reject(error);
     });
   });
 }
 
->>>>>>> Stashed changes
 export const fetchHeaderData = async (
   dispatch: Dispatch<any>
 ): Promise<void> => {
@@ -170,8 +162,6 @@ export const fetchUsersData = async (
   dispatch(setUsersPaginationData(paginationData));
 };
 
-<<<<<<< Updated upstream
-=======
 export const fetchEmailTemplateData = async (
   dispatch: Dispatch<any>
 ): Promise<void> => {
@@ -179,27 +169,80 @@ export const fetchEmailTemplateData = async (
   dispatch(setEmailTemplatesData(data[0]));
 };
 
+export const fetchCustomTemplatesData = async (
+  dispatch: Dispatch<any>
+): Promise<void> => {
+  try {
+    // Fetch all content types that are not standard ones (custom templates)
+    const data = await ManagementStack.contentType().query({
+      query: {
+        uid: {
+          $nin: Object.values(CONTENT_TYPES)
+        }
+      }
+    }).find();
+    
+    dispatch(setCustomTemplatesData(data?.items || []));
+  } catch (error) {
+    console.error("Error fetching custom templates:", error);
+    dispatch(setCustomTemplatesData([]));
+  }
+};
+
+// Fetch specific content type schema by UID
+export const fetchContentTypeSchema = async (contentTypeUID: string): Promise<any> => {
+  try {
+    const contentType = await ManagementStack.contentType(contentTypeUID).fetch();
+    return contentType;
+  } catch (error) {
+    console.error("Error fetching content type schema:", error);
+    throw error;
+  }
+};
+
+// Fetch assets from Contentstack (if needed for asset management)
+export const fetchAssets = async (query: any = {}): Promise<any> => {
+  try {
+    const assets = await ManagementStack.asset().query(query).find();
+    return assets;
+  } catch (error) {
+    console.error("Error fetching assets:", error);
+    throw error;
+  }
+};
+
+// Create entry for custom content type
+export const createCustomContentTypeEntry = async (
+  contentTypeUID: string,
+  entryData: any
+): Promise<any> => {
+  try {
+    const entry = await ManagementStack.contentType(contentTypeUID).entry().create({
+      entry: entryData
+    });
+    
+    return entry;
+  } catch (error) {
+    console.error("Error creating custom content type entry:", error);
+    throw error;
+  }
+};
+
 export const createUser = async (
   dispatch: Dispatch<any>,
   userData: any,
 ): Promise<void> => {
   const data = await createEntry({ contentTypeUid: CONTENT_TYPES.USERS, entryData: userData });
-  const { uid, first_name, last_name, email, subscribed, created_at } = data;
-  dispatch(addUserData({ id: uid, uid, first_name, last_name, email, subscribed, created_at }));
+  const { uid, first_name, last_name, email, subscribed } = data;
+  dispatch(addUserData({ id: uid, uid, first_name, last_name, email, subscribed }));
 };
 
 export const createContentType = async (schema: any): Promise<any> => {
   return new Promise((resolve, reject) => {
     try {
-      console.log("Creating content type with schema:", schema);
-
       // Use template name for content type identification
       const templateName = schema.template_name || 'Untitled Template';
       const sanitizedName = templateName.toLowerCase().replace(/[^a-z0-9]/g, '_');
-      
-      // Generate a unique content type UID using template name
-      const contentTypeUID = `${sanitizedName}_${Date.now()}_${Math.random().toString(36).substring(2, 15)}`;
-      console.log("Generated content type UID:", contentTypeUID);
       
       // Map template sections to Contentstack field types
       const mapSectionToField = (section: any) => {
@@ -248,6 +291,37 @@ export const createContentType = async (schema: any): Promise<any> => {
               }
             };
 
+          case 'link':
+            // Return two separate text fields for link text and URL
+            return [
+              {
+                display_name: `${section.config.label || 'Link'} Text`,
+                uid: `${section.type}_${section.id}_text`,
+                data_type: 'text',
+                field_metadata: {
+                  description: 'Text to display for the link',
+                  default_value: section.config.linkText || 'Click Here',
+                  multiline: false,
+                  rich_text_type: 'basic'
+                },
+                mandatory: section.config.required || false,
+                multiple: false
+              },
+              {
+                display_name: `${section.config.label || 'Link'} URL`,
+                uid: `${section.type}_${section.id}_url`,
+                data_type: 'text',
+                field_metadata: {
+                  description: 'The URL the link should point to',
+                  default_value: section.config.linkUrl || '',
+                  multiline: false,
+                  rich_text_type: 'basic'
+                },
+                mandatory: section.config.required || false,
+                multiple: false
+              }
+            ];
+
           case 'cc':
           case 'bcc':
             return {
@@ -276,7 +350,9 @@ export const createContentType = async (schema: any): Promise<any> => {
       };
 
       // Create fields from template sections
-      const fields = schema.sections ? schema.sections.map(mapSectionToField) : [];
+      const fields = schema.sections ? schema.sections.map(mapSectionToField).flat() : [];
+
+
 
       // Always add title field as required by Contentstack
       const titleField = {
@@ -294,13 +370,43 @@ export const createContentType = async (schema: any): Promise<any> => {
         multiple: false
       };
 
+      const subjectField = {
+        display_name: 'Subject',
+        uid: 'subject',
+        data_type: 'text',
+        field_metadata: {
+          description: 'Email subject',
+          default_value: '',
+          multiline: false,
+          rich_text_type: 'basic'
+        },
+        unique: false,
+        mandatory: true,
+        multiple: false
+      };
+
+      const reciepientsField = {
+        display_name: 'Recipients',
+        uid: 'recipients',
+        data_type: 'text',
+        field_metadata: {
+          description: 'Email Recipients',
+          default_value: '',
+          multiline: false,
+          rich_text_type: 'basic'
+        },
+        unique: false,
+        mandatory: true,
+        multiple: false
+      };
+
       // Create the content type payload
       const contentTypePayload = {
         content_type: {
-          uid: contentTypeUID,
+          uid: sanitizedName,
           title: templateName,
           description: schema.description || `Content type for ${templateName}`,
-          schema: [titleField, ...fields],
+          schema: [titleField, subjectField, reciepientsField, ...fields],
           options: {
             is_page: false,
             singleton: false,
@@ -313,7 +419,6 @@ export const createContentType = async (schema: any): Promise<any> => {
       // TODO: Replace with actual Contentstack API call
       ManagementStack.contentType().create(contentTypePayload)
         .then(result => {
-          console.log("Content type created:", result);
           resolve(result);
         })
         .catch(error => {
@@ -352,8 +457,6 @@ export const createEmailTemplate = async (
   templateData: { entry: TCreateEmailTemplateInput },
 ): Promise<void> => {
   try {
-    console.log("Creating regular email template entry with data:", templateData);
-    
     const { 
       template_name, 
       template_subject,
@@ -377,8 +480,6 @@ export const createEmailTemplate = async (
       isDragDropTemplate: false
     };
 
-    console.log("Creating regular template entry:", templateEntry);
-
     // TODO: Replace with actual Contentstack API call
     // const entry = await ManagementStack.contentType('email_template').entry().create({
     //   entry: templateEntry
@@ -390,8 +491,6 @@ export const createEmailTemplate = async (
       notice: "Regular template created successfully"
     };
 
-    console.log("Regular template entry created successfully:", response);
-
     // Add the new template to the state
     dispatch(addEmailTemplateData({ 
       uid, 
@@ -402,118 +501,8 @@ export const createEmailTemplate = async (
       created_at,
       content_type_uid: undefined
     }));
-
-    console.log("Regular template added to state successfully");
   } catch (error) {
     console.error("Error creating regular email template:", error);
-    throw error;
-  }
-};
-
-// Create custom drag-drop template (template name only)
-export const createCustomTemplate = async (
-  dispatch: Dispatch<any>,
-  templateData: { entry: TCreateCustomTemplateInput },
-): Promise<void> => {
-  try {
-    console.log("Creating custom template entry with data:", templateData);
-    
-    const { 
-      template_name, 
-      template_body, 
-      active, 
-      dragDropData 
-    } = templateData.entry;
-
-    // Generate unique template UID
-    const uid = `template_${Date.now()}_${Math.random().toString(36).substring(2, 15)}`;
-    const created_at = new Date().toISOString();
-
-    // Create the template entry in Contentstack
-    const templateEntry = {
-      uid,
-      template_name,
-      template_body: template_body || "", // Generated from sections
-      active,
-      created_at,
-      content_type_uid: null, // Will be set if content type is created
-      isDragDropTemplate: true,
-      dragDropData: dragDropData
-    };
-
-    console.log("Creating custom template entry:", templateEntry);
-
-    // TODO: Replace with actual Contentstack API call
-    // const entry = await ManagementStack.contentType('email_template').entry().create({
-    //   entry: templateEntry
-    // });
-
-    // Simulate API response
-    const response = {
-      entry: templateEntry,
-      notice: "Custom template created successfully"
-    };
-
-    console.log("Custom template entry created successfully:", response);
-
-    // Add the new template to the state (using TCustomTemplateData format)
-    dispatch(addEmailTemplateData({ 
-      uid, 
-      template_name, 
-      template_subject: "", // Empty for custom templates
-      template_body: template_body || "",
-      active, 
-      created_at,
-      content_type_uid: undefined
-    }));
-
-    console.log("Custom template added to state successfully");
-  } catch (error) {
-    console.error("Error creating custom template:", error);
-    throw error;
-  }
-};
-
-// Complete workflow for creating drag-drop templates with content types
-export const createDragDropTemplateWithContentType = async (
-  dispatch: Dispatch<any>,
-  templateData: { entry: TCreateCustomTemplateInput },
-): Promise<any> => {
-  try {
-    let contentTypeUID = null;
-    let contentTypeResult = null;
-    
-    // Step 1: Create content type if it's a drag-drop template
-    if (templateData.entry.isDragDropTemplate && templateData.entry.dragDropData) {
-      console.log("Creating content type for drag-drop template...");
-      
-      try {
-        contentTypeResult = await createContentType(templateData.entry.dragDropData);
-        console.log("Content type created successfully:", contentTypeResult);
-        // contentTypeUID = contentTypeResult.uid;
-        // console.log("Content type created successfully with UID:", contentTypeUID);
-        // console.log("Content type title:", contentTypeResult.content_type.title);
-      } catch (error) {
-        console.error("Error creating content type:", error);
-        throw new Error(`Failed to create content type: ${error instanceof Error ? error.message : 'Unknown error'}`);
-      }
-    }
-    
-    // Step 2: Create custom template entry (without template creation for now)
-    // Note: Template entry creation is currently disabled per user's changes
-    // Only content type creation is active
-    
-    // Return complete result with template name
-    return {
-      contentTypeName: contentTypeResult?.content_type?.title || templateData.entry.template_name,
-      templateUID: `template_${Date.now()}`,
-      templateName: templateData.entry.template_name,
-      success: true,
-      message: `Content type '${contentTypeResult?.content_type?.title}' created successfully for template '${templateData.entry.template_name}'`
-    };
-    
-  } catch (error) {
-    console.error("Error in complete template creation workflow:", error);
     throw error;
   }
 };
@@ -521,12 +510,9 @@ export const createDragDropTemplateWithContentType = async (
 // Separate function for creating content type only
 export const createTemplateContentType = async (dragDropData: any): Promise<string> => {
   try {
-    console.log("Creating template content type only:", dragDropData);
-    
     const contentTypeResult = await createContentType(dragDropData);
     const contentTypeUID = contentTypeResult.uid;
     
-    console.log("Content type created successfully with UID:", contentTypeUID);
     return contentTypeUID;
   } catch (error) {
     console.error("Error creating template content type:", error);
@@ -534,25 +520,78 @@ export const createTemplateContentType = async (dragDropData: any): Promise<stri
   }
 };
 
->>>>>>> Stashed changes
 export const fetchInitialData = async (
   dispatch: Dispatch<any>,
   setLoading: (status: boolean) => void
 ): Promise<void> => {
   try {
-    console.log("fetching initial data");
     await Promise.all([
       fetchHeaderData(dispatch),
-<<<<<<< Updated upstream
-      fetchUsersData(dispatch),
-=======
       fetchUsersData(dispatch, 1, 5), // Start with first page, 5 users per page
       fetchEmailTemplateData(dispatch),
->>>>>>> Stashed changes
+      fetchCustomTemplatesData(dispatch),
     ]);
     setLoading(false);
   } catch (error) {
     console.error("Error fetching data:", error);
+  }
+};
+
+// Fetch a specific entry by UID from a content type
+export const fetchEntryByUID = async (
+  contentTypeUID: string,
+  entryUID: string
+): Promise<any> => {
+  try {
+    const entry = await Stack.ContentType(contentTypeUID).Entry(entryUID).toJSON().fetch();
+    return entry;
+  } catch (error) {
+    console.error("Error fetching entry by UID:", error);
+    throw error;
+  }
+};
+
+// Start email sending process
+export const startEmailSending = async (
+  contentTypeUID: string,
+  entryUID: string
+): Promise<any> => {
+  try {
+    const response = await fetch('/api/send-emails', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        contentTypeUID,
+        entryUID
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error starting email sending:", error);
+    throw error;
+  }
+};
+
+// Check email sending status
+export const checkEmailSendingStatus = async (jobId: string): Promise<any> => {
+  try {
+    const response = await fetch(`/api/email-status/${jobId}`);
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error checking email sending status:", error);
+    throw error;
   }
 };
 
