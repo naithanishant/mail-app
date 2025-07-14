@@ -14,9 +14,9 @@ export type THeaderData = {
 export type TUsersData = {
   id: string;
   uid: string;
-  first_name: string;
-  last_name: string;
-  email: string;
+  first_name?: string;
+  last_name?: string;
+  email?: string;
   subscribed: boolean;
   created_at?: string;
 };

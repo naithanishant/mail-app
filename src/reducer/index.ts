@@ -14,6 +14,8 @@ interface AppState {
   };
   emailTemplates: TEmailTemplateData[];
   customTemplates: any;
+  emailUsers: TUsersData[];
+  isLoadingEmailUsers: boolean;
 }
 
 const initialState: AppState = {
@@ -41,7 +43,9 @@ const initialState: AppState = {
     hasPreviousPage: false,
   },
   emailTemplates: [],
-  customTemplates: []
+  customTemplates: [],
+  emailUsers: [],
+  isLoadingEmailUsers: false
 };
 
 const mainSlice = createSlice({
@@ -75,6 +79,13 @@ const mainSlice = createSlice({
     setCustomTemplatesData: (state, action: PayloadAction<any>) => {
       state.customTemplates = action.payload;
     },
+    setEmailUsersData: (state, action: PayloadAction<TUsersData[]>) => {
+      state.emailUsers = action.payload;
+      state.isLoadingEmailUsers = false;
+    },
+    setEmailUsersLoading: (state, action: PayloadAction<boolean>) => {
+      state.isLoadingEmailUsers = action.payload;
+    },
   },
 });
 
@@ -86,6 +97,8 @@ export const {
   setEmailTemplatesData,
   addEmailTemplateData,
   setCustomTemplatesData,
+  setEmailUsersData,
+  setEmailUsersLoading,
 } = mainSlice.actions;
 
 export default mainSlice.reducer;

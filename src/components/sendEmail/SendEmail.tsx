@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../../store';
 import { 
   TCustomEmailForm, 
@@ -18,7 +18,8 @@ import { validateRTEContent, normalizeRTEContent } from '../../utils/rteUtils';
 import { fetchContentTypeSchema, createCustomContentTypeEntry } from '../../api';
 
 const SendEmail: React.FC = () => {
-  const { usersData, customTemplates } = useSelector((state: RootState) => state.main);
+  const { customTemplates, emailUsers } = useSelector((state: RootState) => state.main);
+  const dispatch = useDispatch();
   const [formData, setFormData] = useState<TCustomEmailForm>({
     selectedContentType: '',
     title: '',
@@ -41,19 +42,27 @@ const SendEmail: React.FC = () => {
   const [isLoadingSchema, setIsLoadingSchema] = useState(false);
   const userSearchRef = useRef<HTMLDivElement>(null);
 
+
+
   // Filter users based on search query
   useEffect(() => {
     if (userSearchQuery.trim()) {
-      const filtered = usersData.filter(user => 
-        user.first_name.toLowerCase().includes(userSearchQuery.toLowerCase()) ||
-        user.last_name.toLowerCase().includes(userSearchQuery.toLowerCase()) ||
-        user.email.toLowerCase().includes(userSearchQuery.toLowerCase())
-      );
+      const filtered = emailUsers.filter(user => {
+        // Add null checks for all fields
+        const firstName = (user.first_name || '').toLowerCase();
+        const lastName = (user.last_name || '').toLowerCase();
+        const email = (user.email || '').toLowerCase();
+        const searchTerm = userSearchQuery.toLowerCase();
+        
+        return firstName.includes(searchTerm) || 
+               lastName.includes(searchTerm) || 
+               email.includes(searchTerm);
+      });
       setFilteredUsers(filtered);
     } else {
-      setFilteredUsers(usersData);
+      setFilteredUsers(emailUsers);
     }
-  }, [userSearchQuery, usersData]);
+  }, [userSearchQuery, emailUsers]);
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -236,8 +245,8 @@ const SendEmail: React.FC = () => {
   const handleUserSelect = (user: TUsersData) => {
     const selectedUser: TSelectedUser = {
       id: user.uid, // Use UID instead of email
-      name: `${user.first_name} ${user.last_name}`,
-      email: user.email,
+      name: `${user.first_name || ''} ${user.last_name || ''}`.trim() || user.email || user.uid,
+      email: user.email || '',
       subscribed: user.subscribed
     };
 
@@ -668,8 +677,12 @@ const SendEmail: React.FC = () => {
               showUserDropdown,
               filteredUsers,
               userSearchRef,
-              onUserSearchChange: setUserSearchQuery,
-              onUserSearchFocus: () => setShowUserDropdown(true),
+              onUserSearchChange: (query: string) => {
+                setUserSearchQuery(query);
+              },
+              onUserSearchFocus: () => {
+                setShowUserDropdown(true);
+              },
               onUserSelect: handleUserSelect,
               onRemoveRecipient: handleRemoveRecipient,
               // Tags handling

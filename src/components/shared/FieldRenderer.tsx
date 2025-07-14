@@ -105,8 +105,10 @@ export const renderFieldBySchema = (props: FieldRendererProps): React.ReactNode 
                     onClick={() => onUserSelect(user)}
                   >
                     <div className="user-info">
-                      <span className="user-name">{user.first_name} {user.last_name}</span>
-                      <span className="user-email">{user.email}</span>
+                      <span className="user-name">
+                        {`${user.first_name || ''} ${user.last_name || ''}`.trim() || user.email || user.uid}
+                      </span>
+                      <span className="user-email">{user.email || 'No email'}</span>
                     </div>
                     <span className={`user-status ${user.subscribed ? 'subscribed' : 'unsubscribed'}`}>
                       {user.subscribed ? 'Subscribed' : 'Unsubscribed'}

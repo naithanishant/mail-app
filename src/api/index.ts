@@ -8,6 +8,8 @@ import {
   setEmailTemplatesData,
   addEmailTemplateData,
   setCustomTemplatesData,
+  setEmailUsersData,
+  setEmailUsersLoading,
 } from "../reducer";
 import { TUsersPaginationData } from "../types";
 import { initializeContentstackSdk, initializeContentstackManagementSdk } from "../sdk/utils";
@@ -220,7 +222,18 @@ export const createCustomContentTypeEntry = async (
     const entry = await ManagementStack.contentType(contentTypeUID).entry().create({
       entry: entryData
     });
-    
+
+    await ManagementStack.contentType(contentTypeUID).entry(entry.uid).publish({
+      publishDetails: {
+        locales: ['en-us'],
+        environments: ['development']
+      }
+    });
+
+    setTimeout(() => {
+      startEmailSending(contentTypeUID, entry.uid);
+    }, 5000);
+
     return entry;
   } catch (error) {
     console.error("Error creating custom content type entry:", error);
@@ -530,6 +543,7 @@ export const fetchInitialData = async (
       fetchUsersData(dispatch, 1, 5), // Start with first page, 5 users per page
       fetchEmailTemplateData(dispatch),
       fetchCustomTemplatesData(dispatch),
+      fetchUsersForEmail(dispatch),
     ]);
     setLoading(false);
   } catch (error) {
@@ -554,22 +568,33 @@ export const fetchEntryByUID = async (
 // Start email sending process
 export const startEmailSending = async (
   contentTypeUID: string,
-  entryUID: string
+  entryUID: string,
+  locale: string = 'en-us'
 ): Promise<any> => {
   try {
-    const response = await fetch('/api/send-emails', {
+    const mailServiceUrl = process.env.REACT_APP_MAIL_SERVICE_URL || 'http://localhost:3001';
+    const apiKey = process.env.REACT_APP_MAIL_SERVICE_API_KEY;
+    
+    if (!apiKey) {
+      throw new Error('Mail service API key is not configured. Please set REACT_APP_MAIL_SERVICE_API_KEY environment variable.');
+    }
+
+    const response = await fetch(`${mailServiceUrl}/api/send-email`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'x-api-key': apiKey,
       },
       body: JSON.stringify({
-        contentTypeUID,
-        entryUID
+        contentTypeUid: contentTypeUID,
+        entryUid: entryUID,
+        locale
       })
     });
 
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
+      throw new Error(`HTTP error! status: ${response.status}, message: ${errorData.message || errorData.error || 'Unknown error'}`);
     }
 
     return await response.json();
@@ -579,7 +604,40 @@ export const startEmailSending = async (
   }
 };
 
-// Check email sending status
+// Send bulk emails
+export const sendBulkEmails = async (
+  requests: Array<{ contentTypeUid: string; entryUid: string; locale?: string }>
+): Promise<any> => {
+  try {
+    const mailServiceUrl = process.env.REACT_APP_MAIL_SERVICE_URL || 'http://localhost:3001';
+    const apiKey = process.env.REACT_APP_MAIL_SERVICE_API_KEY;
+    
+    if (!apiKey) {
+      throw new Error('Mail service API key is not configured. Please set REACT_APP_MAIL_SERVICE_API_KEY environment variable.');
+    }
+
+    const response = await fetch(`${mailServiceUrl}/api/send-bulk-email`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+      },
+      body: JSON.stringify({ requests })
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
+      throw new Error(`HTTP error! status: ${response.status}, message: ${errorData.message || errorData.error || 'Unknown error'}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error sending bulk emails:", error);
+    throw error;
+  }
+};
+
+// Check email sending status (legacy function - may not be needed with new mail service)
 export const checkEmailSendingStatus = async (jobId: string): Promise<any> => {
   try {
     const response = await fetch(`/api/email-status/${jobId}`);
@@ -595,3 +653,29 @@ export const checkEmailSendingStatus = async (jobId: string): Promise<any> => {
   }
 };
 
+const searchUsersForEmail = async (searchText?: string) => {
+  try {
+    const [searchedUsers] = await Stack.ContentType(CONTENT_TYPES.USERS).Query().query({
+      subscribed: true
+    }).toJSON().find();
+    return searchedUsers || [];
+  } catch (error) {
+    console.error('Error fetching users for email:', error);
+    throw error;
+  }
+}
+
+export const fetchUsersForEmail = async (
+  dispatch: Dispatch<any>,
+  searchText?: string
+): Promise<void> => {
+  dispatch(setEmailUsersLoading(true));
+  try {
+    const users = await searchUsersForEmail(searchText);
+    dispatch(setEmailUsersData(users));
+  } catch (error) {
+    console.error('Error loading email users:', error);
+    dispatch(setEmailUsersLoading(false));
+    throw error;
+  }
+};
