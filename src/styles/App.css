@@ -639,3 +639,64 @@
     }
   }
 }
+
+/* Toast Container Styles - Ensure toasts appear above all other elements */
+.toast-container {
+  z-index: 9999 !important;
+  position: fixed !important;
+  top: 20px !important;
+  right: 20px !important;
+  left: auto !important;
+}
+
+/* Ensure react-hot-toast container has highest z-index and correct positioning */
+div[data-react-hot-toast] {
+  z-index: 9999 !important;
+  position: fixed !important;
+  top: 20px !important;
+  right: 20px !important;
+  left: auto !important;
+  width: auto !important;
+  pointer-events: none; /* Allow clicks to pass through container */
+}
+
+/* Enable pointer events on individual toasts */
+div[data-react-hot-toast] > div {
+  pointer-events: auto;
+}
+
+/* Custom toast animations - slide in from right */
+@keyframes toast-enter-right {
+  0% {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes toast-exit-right {
+  0% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+/* Apply animations to toast elements when they're on the right side */
+div[data-react-hot-toast] > div[data-state="entering"] {
+  animation: toast-enter-right 0.35s cubic-bezier(0.21, 1.02, 0.73, 1) !important;
+}
+
+div[data-react-hot-toast] > div[data-state="leaving"] {
+  animation: toast-exit-right 0.4s cubic-bezier(0.06, 0.71, 0.55, 1) !important;
+}
+
+div[data-react-hot-toast] > div[data-state="visible"] {
+  animation: none !important;
+}

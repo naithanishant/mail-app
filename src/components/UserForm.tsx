@@ -1,4 +1,5 @@
 import React, { useReducer, useState } from 'react';
+import { useToast } from '../contexts/ToastContext';
 
 interface UserFormData {
   first_name: string;
@@ -49,7 +50,7 @@ interface UserFormProps {
 const UserForm: React.FC<UserFormProps> = ({ onUserCreated, onCancel }) => {
   const [formData, dispatch] = useReducer(formReducer, initialFormState);
   const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState<string>('');
+  const { showSuccess, showError } = useToast();
 
   // Mock API call function
   const mockApiCall = async (userData: UserFormData): Promise<ApiResponse> => {
@@ -77,20 +78,19 @@ const UserForm: React.FC<UserFormProps> = ({ onUserCreated, onCancel }) => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
-    setMessage('');
 
     try {
       const response = await mockApiCall(formData);
       
       if (response.success) {
-        setMessage(response.message);
+        showSuccess(response.message);
         // Reset form after successful submission
         dispatch({ type: 'RESET_FORM' });
         // Call the callback with the created user data
         onUserCreated(formData);
       }
     } catch (error) {
-      setMessage('Failed to create user. Please try again.');
+      showError('Failed to create user. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -214,21 +214,6 @@ const UserForm: React.FC<UserFormProps> = ({ onUserCreated, onCancel }) => {
           </button>
         </div>
       </form>
-
-      {message && (
-        <div
-          style={{
-            marginTop: '15px',
-            padding: '10px',
-            backgroundColor: message.includes('Failed') ? '#f8d7da' : '#d4edda',
-            color: message.includes('Failed') ? '#721c24' : '#155724',
-            border: `1px solid ${message.includes('Failed') ? '#f5c6cb' : '#c3e6cb'}`,
-            borderRadius: '4px',
-          }}
-        >
-          {message}
-        </div>
-      )}
     </div>
   );
 };

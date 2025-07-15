@@ -6,6 +6,7 @@ import { RootState } from '../../store';
 import { createTemplateContentType, fetchCustomTemplatesData } from '../../api/index';
 import { TCreateCustomTemplateInput } from '../../types/index';
 import DragDropTemplateModal from './components/DragDropTemplateModal';
+import { useToast } from '../../contexts/ToastContext';
 
 interface CustomTemplate {
   uid: string;
@@ -19,6 +20,7 @@ interface CustomTemplate {
 const EmailTemplatesList: React.FC<any> = () => {
   const customTemplates = useSelector((state: RootState) => state.main.customTemplates);
   const dispatch = useDispatch();
+  const { showSuccess, showError } = useToast();
   const [isDragDropModalOpen, setIsDragDropModalOpen] = useState(false);
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState<CustomTemplate | null>(null);
@@ -52,9 +54,10 @@ const EmailTemplatesList: React.FC<any> = () => {
       await createTemplateContentType(templateData.dragDropData);
       // Refresh custom templates list after creation
       fetchCustomTemplatesData(dispatch);
+      showSuccess('Template created successfully!');
     } catch (error) {
       console.error('Error creating custom template:', error);
-      alert(`Failed to create template: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      showError(`Failed to create template: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   };
 
