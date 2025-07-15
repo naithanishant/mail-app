@@ -17,10 +17,12 @@ import RichTextEditor from '../shared/RichTextEditor/RichTextEditor';
 import { renderFieldBySchema } from '../shared/FieldRenderer';
 import { validateRTEContent, normalizeRTEContent } from '../../utils/rteUtils';
 import { fetchContentTypeSchema, createCustomContentTypeEntry } from '../../api';
+import { useToast } from '../../contexts/ToastContext';
 
 const SendEmail: React.FC = () => {
   const { customTemplates, emailUsers } = useSelector((state: RootState) => state.main);
   const dispatch = useDispatch();
+  const { showSuccess, showError } = useToast();
   const [formData, setFormData] = useState<TCustomEmailForm>({
     selectedContentType: '',
     title: '',
@@ -604,6 +606,9 @@ const SendEmail: React.FC = () => {
       // Create the entry in Contentstack
       const createdEntry = await createCustomContentTypeEntry(formData.selectedContentType, entryData);
       
+      // Show success toast
+      showSuccess('Email entry created successfully!');
+      
       // Reset form after successful submission
       setFormData({
         selectedContentType: '',
@@ -620,7 +625,7 @@ const SendEmail: React.FC = () => {
       setOriginalSchema([]);      
     } catch (error) {
       console.error('Error creating email entry:', error);
-      alert(`Failed to create email entry: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      showError(`Failed to create email entry: ${error instanceof Error ? error.message : 'Unknown error'}`);
     } finally {
       setIsSubmitting(false);
     }

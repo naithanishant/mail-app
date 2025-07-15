@@ -21,6 +21,7 @@ import { createTemplateContentType } from '../../../api/index';
 import { TCreateCustomTemplateInput } from '../../../types/index';
 import RichTextEditor from '../../shared/RichTextEditor/RichTextEditor';
 import { validateRTEContent, normalizeRTEContent } from '../../../utils/rteUtils';
+import { useToast } from '../../../contexts/ToastContext';
 
 interface DragDropTemplateModalProps {
   isOpen: boolean;
@@ -57,8 +58,23 @@ const DragDropTemplateModal: React.FC<DragDropTemplateModalProps> = ({
   onSaveTemplate,
   existingTemplate
 }) => {
-  const [template, setTemplate] = useState<any>(createNewTemplate('Custom Template'));
-  const [selectedSectionId, setSelectedSectionId] = useState<string | null>(null);
+  // Create initial template with default text section
+  const createInitialTemplate = () => {
+    const newTemplate = createNewTemplate(`Custom Template ${Date.now()}`);
+    const defaultTextSection = createNewSection('text', 0);
+    
+    return {
+      template: {
+        ...newTemplate,
+        sections: [defaultTextSection]
+      },
+      defaultSectionId: defaultTextSection.id
+    };
+  };
+
+  const initialData = createInitialTemplate();
+  const [template, setTemplate] = useState<any>(initialData.template);
+  const [selectedSectionId, setSelectedSectionId] = useState<string | null>(initialData.defaultSectionId);
   const [draggedSectionType, setDraggedSectionType] = useState<TSectionType | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [errors, setErrors] = useState<{
@@ -68,25 +84,34 @@ const DragDropTemplateModal: React.FC<DragDropTemplateModalProps> = ({
     general?: string;
   }>({});
   const [isCreating, setIsCreating] = useState(false);
-  const [successMessage, setSuccessMessage] = useState<string>('');
+  const { showSuccess, showError, showWarning } = useToast();
 
   const dropZoneRef = useRef<HTMLDivElement>(null);
 
   // Clear errors when template changes
   useEffect(() => {
     setErrors({});
-    setSuccessMessage('');
   }, [template.template_name, template.sections]);
 
   useEffect(() => {
     if (existingTemplate) {
       setTemplate(existingTemplate);
+      // Set the first section as selected if there are sections
+      if (existingTemplate.sections && existingTemplate.sections.length > 0) {
+        setSelectedSectionId(existingTemplate.sections[0].id);
+      } else {
+        setSelectedSectionId(null);
+      }
     } else {
-      setTemplate(createNewTemplate('Custom Template'));
+      // Create new template with default text section
+      const initialData = createInitialTemplate();
+      setTemplate(initialData.template);
+      setSelectedSectionId(initialData.defaultSectionId);
     }
     setErrors({});
-    setSuccessMessage('');
   }, [existingTemplate, isOpen]);
+
+
 
   const clearError = (field: keyof typeof errors) => {
     setErrors(prev => ({ ...prev, [field]: undefined }));
@@ -94,7 +119,6 @@ const DragDropTemplateModal: React.FC<DragDropTemplateModalProps> = ({
 
   const setError = (field: keyof typeof errors, message: string) => {
     setErrors(prev => ({ ...prev, [field]: message }));
-    setSuccessMessage('');
   };
 
   const handleDragStart = (e: React.DragEvent, sectionType: TSectionType) => {
@@ -207,27 +231,71 @@ const DragDropTemplateModal: React.FC<DragDropTemplateModalProps> = ({
       ...prev,
       [field]: value
     }));
+    
+    // Trigger validation when template name changes
+    if (field === 'template_name') {
+      // Clear errors first
+      setErrors({});
+      
+      // Validate after a short delay to avoid showing errors while typing
+      setTimeout(() => {
+        const newErrors: typeof errors = {};
+        
+        if (!value || value.trim() === '' || value.trim() === 'Custom Template') {
+          newErrors.templateName = 'Please enter a unique template name';
+        } else if (value.trim().length < 3) {
+          newErrors.templateName = 'Template name must be at least 3 characters long';
+        }
+        
+        setErrors(newErrors);
+      }, 500);
+    }
+  };
+
+  const validateForm = () => {
+    const newErrors: typeof errors = {};
+    
+    // Template name validation
+    if (!template.template_name || template.template_name.trim() === '' || template.template_name.trim() === 'Custom Template') {
+      newErrors.templateName = 'Please enter a unique template name';
+    } else if (template.template_name.trim().length < 3) {
+      newErrors.templateName = 'Template name must be at least 3 characters long';
+    }
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const isFormValid = () => {
+    // Check if template name is valid
+    const templateName = template.template_name;
+    const isTemplateNameValid = templateName && 
+           templateName.trim() !== '' && 
+           templateName.trim() !== 'Custom Template' && 
+           templateName.trim().length >= 3;
+    
+    // Check if there are any form errors
+    const hasErrors = Object.keys(errors).some(key => errors[key as keyof typeof errors]);
+    
+    return isTemplateNameValid && !hasErrors;
   };
 
   const handleSave = async () => {
+    if (!validateForm()) {
+      return;
+    }
+    
     try {
-      // Ensure template name is not empty
-      if (!template.template_name || template.template_name.trim() === '' || template.template_name === 'Custom Template') {
-        setError('templateName', 'Please enter a template name');
-        return;
-      }
-      clearError('templateName');
-      
       // Prepare template data with drag-drop structure
       const templateData: TCreateCustomTemplateInput = {
-        template_name: template.template_name,
+        template_name: template.template_name.trim(),
         template_body: "", // Will be generated from sections
         active: true,
         isDragDropTemplate: true,
         dragDropData: {
           ...template,
           // Ensure template name is included in dragDropData
-          template_name: template.template_name
+          template_name: template.template_name.trim()
         }
       };
       
@@ -238,34 +306,36 @@ const DragDropTemplateModal: React.FC<DragDropTemplateModalProps> = ({
       
     } catch (error) {
       console.error("Error saving template:", error);
-      setError('general', `Failed to save template: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      showError(`Failed to save template: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   };
 
   const handleCreateContentTypeOnly = async () => {
+    if (!validateForm()) {
+      return;
+    }
+    
     try {
       setIsCreating(true);
-      setErrors({});
-      setSuccessMessage('');
       
-      // Ensure template name is not empty
-      if (!template.template_name || template.template_name.trim() === '' || template.template_name === 'Custom Template') {
-        setError('templateName', 'Please enter a template name');
-        return;
-      }
-      clearError('templateName');
-      
-      // Prepare template data with name
-      const templateWithName: any = {
-        ...template,
-        template_name: template.template_name
+      // Prepare template data with drag-drop structure (same format as handleSave)
+      const templateData: TCreateCustomTemplateInput = {
+        template_name: template.template_name.trim(),
+        template_body: "", // Will be generated from sections
+        active: true,
+        isDragDropTemplate: true,
+        dragDropData: {
+          ...template,
+          // Ensure template name is included in dragDropData
+          template_name: template.template_name.trim()
+        }
       };
       
-      onSaveTemplate(templateWithName);
+      onSaveTemplate(templateData);
       onClose();
     } catch (error) {
       console.error("Error creating content type:", error);
-      setError('contentType', `Failed to create content type: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      showError(`Failed to create content type: ${error instanceof Error ? error.message : 'Unknown error'}`);
     } finally {
       setIsCreating(false);
     }
@@ -412,8 +482,9 @@ const DragDropTemplateModal: React.FC<DragDropTemplateModalProps> = ({
               type="text"
               value={template.template_name}
               onChange={(e) => handleTemplateSettingsChange('template_name', e.target.value)}
-              placeholder="Enter template name"
+              placeholder="Enter a unique template name (min 3 characters)"
               className={`template-name-input ${errors.templateName ? 'error' : ''}`}
+              maxLength={50}
             />
             {errors.templateName && <p className="error-message">{errors.templateName}</p>}
           </div>
@@ -531,7 +602,7 @@ const DragDropTemplateModal: React.FC<DragDropTemplateModalProps> = ({
                          <Button className="cancel-btn" onClick={onClose} buttonType="secondary">
                 Cancel
              </Button>
-             <Button className="content-type-btn" onClick={handleCreateContentTypeOnly} disabled={isCreating} buttonType="primary">
+             <Button className="content-type-btn" onClick={handleCreateContentTypeOnly} disabled={isCreating || !isFormValid()} buttonType="primary">
                 {isCreating ? 'Creating...' : 'Create Content Type Only'}
              </Button>
           </div>

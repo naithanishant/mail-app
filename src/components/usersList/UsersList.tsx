@@ -5,6 +5,7 @@ import { useSelector, useDispatch, } from 'react-redux';
 import { RootState } from '../../store';
 import { createUser, fetchUsersData } from '../../api';
 import AddUserModal from './components/AddUserModal';
+import { useToast } from '../../contexts/ToastContext';
 
 interface User {
   id: string;
@@ -19,6 +20,7 @@ interface User {
 const UsersList: React.FC<any> = () => {
   const { usersData, usersPagination } = useSelector((state: RootState) => state.main);
   const dispatch = useDispatch();
+  const { showSuccess, showError } = useToast();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoadingPage, setIsLoadingPage] = useState(false);
 
@@ -41,8 +43,10 @@ const UsersList: React.FC<any> = () => {
 
     try {
       await createUser(dispatch, { entry: newUser });
+      showSuccess('User created successfully!');
     } catch (error) {
       console.error('Error creating user:', error);
+      showError('Failed to create user. Please try again.');
     }
   };
 
@@ -53,6 +57,7 @@ const UsersList: React.FC<any> = () => {
         await fetchUsersData(dispatch, page, usersPagination.limit);
       } catch (error) {
         console.error('Error fetching users:', error);
+        showError('Failed to fetch users. Please try again.');
       } finally {
         setIsLoadingPage(false);
       }
