@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Button } from '@contentstack/venus-components';
 import '../../styles/EmailTemplatesList.css';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../../store';
@@ -70,28 +71,28 @@ const EmailTemplatesList: React.FC<any> = () => {
   return (
     <div className="email-templates-list-container">
       <div className="email-templates-list-header">
-        <h1>Custom Email Templates</h1>
+        <h1 className="heading-2">Custom Email Templates</h1>
         <div className="header-buttons">
-          <button
+          <Button
             onClick={handleOpenDragDropModal}
             className="add-custom-template-button"
           >
             🎨 Create Custom Template
-          </button>
+          </Button>
         </div>
       </div>
 
       {!customTemplates || customTemplates.length === 0 ? (
         <div className="no-templates-container">
-          <h3 className="no-templates-title">No custom templates found</h3>
-          <p className="no-templates-description">Get started by creating your first custom email template</p>
+          <h3 className="heading-4">No custom templates found</h3>
+          <p className="body-normal">Get started by creating your first custom email template</p>
           <div className="first-template-buttons">
-            <button
+            <Button
               onClick={handleOpenDragDropModal}
               className="add-first-custom-template-button"
             >
               🎨 Create Custom Template
-            </button>
+            </Button>
           </div>
         </div>
       ) : (
@@ -104,16 +105,16 @@ const EmailTemplatesList: React.FC<any> = () => {
             >
               <div className="template-card-content">
                 <div className="template-details">
-                  <h3 className="template-name">
+                  <h3 className="heading-6">
                     {template.title}
                   </h3>
-                  <p className="template-description">
+                  <p className="body-small">
                     <strong>Description:</strong> {template.description || 'No description'}
                   </p>
-                  <p className="template-fields">
+                  <p className="body-small">
                     <strong>Fields:</strong> {getFieldCount(template.schema)} custom fields
                   </p>
-                  <p className="template-created">
+                  <p className="caption">
                     <strong>Created:</strong> {formatDate(template.created_at)}
                   </p>
                 </div>
@@ -128,7 +129,7 @@ const EmailTemplatesList: React.FC<any> = () => {
 
       {customTemplates && customTemplates.length > 0 && (
         <div className="templates-count">
-          Total Custom Templates: {customTemplates.length}
+          <p className="body-small">Total Custom Templates: {customTemplates.length}</p>
         </div>
       )}
 
@@ -143,18 +144,17 @@ const EmailTemplatesList: React.FC<any> = () => {
           <div className="template-view-content">
             <div className="template-view-header">
               <h2>{selectedTemplate.title}</h2>
-              <button 
+              <Button 
                 onClick={handleCloseViewModal}
                 className="close-button"
+                buttonType="tertiary"
               >
                 ×
-              </button>
+              </Button>
             </div>
             <div className="template-view-body">
               <p><strong>Description:</strong> {selectedTemplate.description || 'No description'}</p>
               <p><strong>UID:</strong> {selectedTemplate.uid}</p>
-              <p><strong>Created:</strong> {formatDate(selectedTemplate.created_at)}</p>
-              <p><strong>Updated:</strong> {formatDate(selectedTemplate.updated_at)}</p>
               <div className="template-schema">
                 <h4>Template Fields ({getFieldCount(selectedTemplate.schema)}):</h4>
                 {selectedTemplate.schema && selectedTemplate.schema.length > 0 ? (

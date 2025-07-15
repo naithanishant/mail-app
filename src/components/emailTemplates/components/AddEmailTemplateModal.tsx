@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Button } from '@contentstack/venus-components';
 import '../../../styles/AddEmailTemplateModal.css';
 import RichTextEditor from '../../shared/RichTextEditor/RichTextEditor';
 import { validateRTEContent, normalizeRTEContent } from '../../../utils/rteUtils';
@@ -157,9 +158,13 @@ const AddEmailTemplateModal: React.FC<AddEmailTemplateModalProps> = ({
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
           <h2>{isViewMode ? 'View Email Template' : 'Add New Email Template'}</h2>
-          <button className="modal-close-button" onClick={handleClose}>
+          <Button
+            buttonType="tertiary"
+            onClick={handleClose}
+            className="modal-close-button"
+          >
             ×
-          </button>
+          </Button>
         </div>
         
         <form onSubmit={handleSubmit} className="modal-form">
@@ -223,17 +228,17 @@ const AddEmailTemplateModal: React.FC<AddEmailTemplateModalProps> = ({
         </form>
           <div className="modal-actions">
             {isViewMode ? (
-              <button type="button" className="cancel-button" onClick={handleClose}>
+              <Button type="button" buttonType="secondary" onClick={handleClose}>
                 Close
-              </button>
+              </Button>
             ) : (
               <>
-                <button type="button" className="cancel-button" onClick={handleClose}>
+                <Button type="button" buttonType="secondary" onClick={handleClose}>
                   Cancel
-                </button>
-                <button type="submit" className="submit-button">
+                </Button>
+                <Button type="submit" buttonType="primary">
                   Add Template
-                </button>
+                </Button>
               </>
             )}
           </div>

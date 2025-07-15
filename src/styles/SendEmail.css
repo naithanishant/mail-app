@@ -297,34 +297,7 @@
   border-top: 2px solid #f0f0f0;
 }
 
-.send-button {
-  background-color: #3822aa;
-  color: #ffffff;
-  border: none;
-  border-radius: 24px;
-  padding: 16px 48px;
-  font-size: 20px;
-  font-weight: 600;
-  line-height: 1.4;
-  cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.2s ease;
-  min-width: 160px;
-}
 
-.send-button:hover:not(:disabled) {
-  background-color: #241d32;
-  transform: translateY(-2px);
-}
-
-.send-button:disabled {
-  background-color: #ccc;
-  cursor: not-allowed;
-  transform: none;
-}
-
-.send-button:active {
-  transform: translateY(0);
-}
 
 /* Responsive Design */
 @media screen and (max-width: 768px) {
@@ -384,10 +357,7 @@
     font-size: 13px;
   }
 
-  .send-button {
-    padding: 14px 32px;
-    font-size: 18px;
-  }
+
 }
 
 @media screen and (max-width: 480px) {
@@ -438,9 +408,5 @@
     font-size: 12px;
   }
 
-  .send-button {
-    padding: 12px 24px;
-    font-size: 16px;
-    min-width: 120px;
-  }
+
 } 

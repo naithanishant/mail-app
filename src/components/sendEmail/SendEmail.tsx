@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { Button } from '@contentstack/venus-components';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../../store';
 import { 
@@ -626,41 +627,41 @@ const SendEmail: React.FC = () => {
   };
 
   return (
-    <div className="send-email-container">
-      <div className="send-email-header">
-        <h1>Send Email</h1>
-        <p>Create and send personalized emails using custom templates</p>
-      </div>
-
-      <form onSubmit={handleSubmit} className="send-email-form">
-        {/* Custom Template Selection */}
-        <div className="form-group">
-          <label htmlFor="template" className="form-label">
-            Select Custom Template *
-          </label>
-          <select
-            id="template"
-            value={formData.selectedContentType}
-            onChange={(e) => handleTemplateSelect(e.target.value)}
-            className={`form-input template-select ${errors.selectedContentType ? 'error' : ''}`}
-          >
-            <option value="">Choose a custom template...</option>
-            {customTemplates.map((template: any) => (
-              <option key={template.uid} value={template.uid}>
-                {template.title}
-              </option>
-            ))}
-          </select>
-          {errors.selectedContentType && <span className="error-message">{errors.selectedContentType}</span>}
-          {isLoadingSchema && (
-            <p className="template-info">Loading template schema...</p>
-          )}
-          {selectedTemplate && !isLoadingSchema && (
-            <p className="template-info">
-              Template selected: {selectedTemplate.title}. Fill in the fields below based on the template schema.
-            </p>
-          )}
+          <div className="send-email-container">
+        <div className="send-email-header">
+          <h1 className="heading-1">Send Email</h1>
+          <p className="body-large">Create and send personalized emails using custom templates</p>
         </div>
+
+        <form onSubmit={handleSubmit} className="send-email-form">
+          {/* Custom Template Selection */}
+          <div className="form-group">
+            <label htmlFor="template" className="label">
+              Select Custom Template *
+            </label>
+            <select
+              id="template"
+              value={formData.selectedContentType}
+              onChange={(e) => handleTemplateSelect(e.target.value)}
+              className={`form-input template-select ${errors.selectedContentType ? 'error' : ''}`}
+            >
+              <option value="">Choose a custom template...</option>
+              {customTemplates.map((template: any) => (
+                <option key={template.uid} value={template.uid}>
+                  {template.title}
+                </option>
+              ))}
+            </select>
+            {errors.selectedContentType && <span className="caption" style={{ color: '#dc3545' }}>{errors.selectedContentType}</span>}
+            {isLoadingSchema && (
+              <p className="body-small">Loading template schema...</p>
+            )}
+            {selectedTemplate && !isLoadingSchema && (
+              <p className="body-small">
+                Template selected: {selectedTemplate.title}. Fill in the fields below based on the template schema.
+              </p>
+            )}
+          </div>
 
                 {/* Show form fields only when template is selected */}
         {selectedTemplate && !isLoadingSchema && (
@@ -697,13 +698,14 @@ const SendEmail: React.FC = () => {
 
             {/* Submit Button */}
             <div className="form-actions">
-              <button
+              <Button
                 type="submit"
                 disabled={isSubmitting}
+                buttonType="primary"
                 className="send-button"
               >
                 {isSubmitting ? 'Creating Entry...' : 'Create Email Entry'}
-              </button>
+              </Button>
             </div>
           </>
         )}
