@@ -49,19 +49,7 @@
 
 
 
-.close-btn {
-  background: none;
-  border: none;
-  font-size: 24px;
-  cursor: pointer;
-  color: #666;
-  padding: 4px;
-  border-radius: 4px;
-}
 
-.close-btn:hover {
-  background: #f0f0f0;
-}
 
 /* Modal Body */
 .modal-body {
@@ -238,33 +226,7 @@
   opacity: 1;
 }
 
-.section-move-btn,
-.section-delete-btn {
-  background: rgba(0, 0, 0, 0.7);
-  color: white;
-  border: none;
-  width: 24px;
-  height: 24px;
-  border-radius: 3px;
-  cursor: pointer;
-  font-size: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
 
-.section-move-btn:hover {
-  background: #007bff;
-}
-
-.section-delete-btn:hover {
-  background: #dc3545;
-}
-
-.section-move-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
 
 .section-content {
   padding: 15px;
@@ -489,28 +451,7 @@
   justify-content: flex-end;
 }
 
-.cancel-btn, .save-btn, .content-type-btn {
-  padding: 8px 16px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 14px;
-  transition: background-color 0.2s;
-}
 
-.cancel-btn {
-  background-color: #f5f5f5;
-  color: #666;
-}
-
-.cancel-btn:hover {
-  background-color: #e0e0e0;
-}
-
-.content-type-btn {
-  background-color: #007bff;
-  color: white;
-}
 
 
 /* Rich Text Editor in Properties Panel */
@@ -767,11 +708,4 @@
 }
 
 /* Button loading state */
-.content-type-btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-.content-type-btn:disabled:hover {
-  background-color: #0056b3;
-} 
+ 

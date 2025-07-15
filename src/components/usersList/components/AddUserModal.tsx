@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Button } from '@contentstack/venus-components';
 import '../../../styles/AddUserModal.css';
 
 interface AddUserModalProps {
@@ -53,8 +54,8 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ isOpen, onClose, onAddUser 
 
     if (!formData.email.trim()) {
       newErrors.email = 'Email is required';
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = 'Email is invalid';
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      newErrors.email = 'Please enter a valid email address';
     }
 
     setErrors(newErrors);
@@ -63,7 +64,6 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ isOpen, onClose, onAddUser 
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
     if (validateForm()) {
       onAddUser(formData);
       handleClose();
@@ -74,7 +74,7 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ isOpen, onClose, onAddUser 
     setFormData({
       first_name: '',
       last_name: '',
-      email: '',
+      email: ''
     });
     setErrors({
       first_name: '',
@@ -90,62 +90,82 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ isOpen, onClose, onAddUser 
     <div className="modal-overlay" onClick={handleClose}>
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
-          <h2>Add New User</h2>
-          <button className="modal-close-button" onClick={handleClose}>
+          <h2 className="heading-4">Add New User</h2>
+          <Button
+            buttonType="tertiary"
+            onClick={onClose}
+            className="modal-close-button"
+          >
             ×
-          </button>
+          </Button>
         </div>
         
         <form onSubmit={handleSubmit} className="modal-form">
           <div className="form-group">
-            <label htmlFor="first_name">First Name *</label>
+            <label htmlFor="first_name" className="label">
+              First Name *
+            </label>
             <input
               type="text"
               id="first_name"
               name="first_name"
               value={formData.first_name}
               onChange={handleInputChange}
-              className={errors.first_name ? 'error' : ''}
+              className={`form-input ${errors.first_name ? 'error' : ''}`}
               placeholder="Enter first name"
+              required
             />
-            {errors.first_name && <span className="error-message">{errors.first_name}</span>}
+            {errors.first_name && <span className="caption" style={{ color: '#dc3545' }}>{errors.first_name}</span>}
           </div>
 
           <div className="form-group">
-            <label htmlFor="last_name">Last Name *</label>
+            <label htmlFor="last_name" className="label">
+              Last Name *
+            </label>
             <input
               type="text"
               id="last_name"
               name="last_name"
               value={formData.last_name}
               onChange={handleInputChange}
-              className={errors.last_name ? 'error' : ''}
+              className={`form-input ${errors.last_name ? 'error' : ''}`}
               placeholder="Enter last name"
+              required
             />
-            {errors.last_name && <span className="error-message">{errors.last_name}</span>}
+            {errors.last_name && <span className="caption" style={{ color: '#dc3545' }}>{errors.last_name}</span>}
           </div>
 
           <div className="form-group">
-            <label htmlFor="email">Email *</label>
+            <label htmlFor="email" className="label">
+              Email Address *
+            </label>
             <input
               type="email"
               id="email"
               name="email"
               value={formData.email}
               onChange={handleInputChange}
-              className={errors.email ? 'error' : ''}
+              className={`form-input ${errors.email ? 'error' : ''}`}
               placeholder="Enter email address"
+              required
             />
-            {errors.email && <span className="error-message">{errors.email}</span>}
+            {errors.email && <span className="caption" style={{ color: '#dc3545' }}>{errors.email}</span>}
           </div>
 
           <div className="modal-actions">
-            <button type="button" className="cancel-button" onClick={handleClose}>
+            <Button
+              buttonType="secondary"
+              onClick={handleClose}
+              type="button"
+            >
               Cancel
-            </button>
-            <button type="submit" className="submit-button">
+            </Button>
+            <Button
+              buttonType="primary"
+              type="submit"
+            >
               Add User
-            </button>
+            </Button>
           </div>
         </form>
       </div>

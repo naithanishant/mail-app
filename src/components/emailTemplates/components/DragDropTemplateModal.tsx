@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { Button } from '@contentstack/venus-components';
+import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
 import '../../../styles/DragDropTemplateModal.css';
 import { 
   createNewTemplate, 
@@ -279,35 +281,38 @@ const DragDropTemplateModal: React.FC<DragDropTemplateModalProps> = ({
         onClick={() => handleSectionClick(section.id)}
       >
         <div className="section-controls">
-          <button 
+          <Button 
             className="section-move-btn"
-            onClick={(e) => {
+            onClick={(e: React.MouseEvent) => {
               e.stopPropagation();
               handleSectionMove(section.id, 'up');
             }}
             disabled={section.order === 0}
+            buttonType="tertiary"
           >
             ↑
-          </button>
-          <button 
+          </Button>
+          <Button 
             className="section-move-btn"
-            onClick={(e) => {
+            onClick={(e: React.MouseEvent) => {
               e.stopPropagation();
               handleSectionMove(section.id, 'down');
             }}
             disabled={section.order === template.sections.length - 1}
+            buttonType="tertiary"
           >
             ↓
-          </button>
-          <button 
+          </Button>
+          <Button 
             className="section-delete-btn"
-            onClick={(e) => {
+            onClick={(e: React.MouseEvent) => {
               e.stopPropagation();
               handleSectionDelete(section.id);
             }}
+            buttonType="tertiary"
           >
             ×
-          </button>
+          </Button>
         </div>
         
         <div className="section-content">
@@ -436,7 +441,9 @@ const DragDropTemplateModal: React.FC<DragDropTemplateModalProps> = ({
         <div className="modal-header">
           <h2>Custom Template Builder</h2>
           <div className="header-actions">
-            <button className="close-btn" onClick={onClose}>×</button>
+            <Button className="close-btn" onClick={onClose} buttonType="tertiary">
+               ×
+            </Button>
           </div>
         </div>
 
@@ -521,12 +528,12 @@ const DragDropTemplateModal: React.FC<DragDropTemplateModalProps> = ({
 
         <div className="modal-footer">
           <div className="footer-actions">
-            <button className="cancel-btn" onClick={onClose}>
-              Cancel
-            </button>
-            <button className="content-type-btn" onClick={handleCreateContentTypeOnly} disabled={isCreating}>
-              {isCreating ? 'Creating...' : 'Create Content Type Only'}
-            </button>
+                         <Button className="cancel-btn" onClick={onClose} buttonType="secondary">
+                Cancel
+             </Button>
+             <Button className="content-type-btn" onClick={handleCreateContentTypeOnly} disabled={isCreating} buttonType="primary">
+                {isCreating ? 'Creating...' : 'Create Content Type Only'}
+             </Button>
           </div>
         </div>
       </div>

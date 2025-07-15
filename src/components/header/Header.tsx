@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Button } from '@contentstack/venus-components';
 import { useSelector } from "react-redux";
 import { Link, useLocation } from "react-router-dom";
 import { RootState } from "../../store";
@@ -18,26 +19,30 @@ const Header: React.FC = () => {
     <div className={`header ${isOpen ? "open" : ""}`}>
       {/* <div className="logo-menu">
         <Link to="/">
-          <img src={logo?.url} alt="Logo" />
+          <img src={logo?.url} alt={logo?.title} />
         </Link>
       </div> */}
-      <nav className={`nav ${isOpen ? "active" : ""}`}>
-        {navigation_links?.link.map((link: TLink, index: number) => (
+      <nav className="nav">
+        {navigation_links?.link?.map((navLink: TLink, index: number) => (
           <Link
-            key={`key-${index}`}
-            to={link.href}
-            className={location.pathname === link.href ? "active" : ""}
-            onClick={() => setIsOpen(false)}
+            key={index}
+            to={navLink.href}
+            className={`nav-link ${location.pathname === navLink.href ? 'active' : ''}`}
           >
-            {link.title}
+            {navLink.title}
           </Link>
         ))}
       </nav>
-      <div className="menu-toggle" onClick={handleToggleMenu}>
-        <div className="icon-bar"></div>
-        <div className="icon-bar"></div>
-        <div className="icon-bar"></div>
-      </div>
+      <Button
+        buttonType="tertiary"
+        className="menu-toggle"
+        onClick={handleToggleMenu}
+        aria-label="Toggle menu"
+      >
+        <span className="icon-bar"></span>
+        <span className="icon-bar"></span>
+        <span className="icon-bar"></span>
+      </Button>
     </div>
   );
 };

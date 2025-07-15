@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Button } from '@contentstack/venus-components';
 import '../../styles/UsersList.css';
 import { useSelector, useDispatch, } from 'react-redux';
 import { RootState } from '../../store';
@@ -108,25 +109,25 @@ const UsersList: React.FC<any> = () => {
   return (
     <div className="users-list-container">
       <div className="users-list-header">
-        <h1>Users Management</h1>
-        <button
+        <h1 className="heading-2">Users List</h1>
+        <Button
           onClick={handleOpenModal}
           className="add-user-button"
         >
-          + Add New User
-        </button>
+          ➕ Add User
+        </Button>
       </div>
 
       {usersPagination.totalCount === 0 ? (
         <div className="no-users-container">
-          <h3 className="no-users-title">No users found</h3>
-          <p className="no-users-description">Get started by adding your first user</p>
-          <button
+          <h3 className="heading-4">No users found</h3>
+          <p className="body-normal">Get started by adding your first user to the system</p>
+          <Button
             onClick={handleOpenModal}
             className="add-first-user-button"
           >
-            Add First User
-          </button>
+            ➕ Add First User
+          </Button>
         </div>
       ) : (
         <>
@@ -138,15 +139,18 @@ const UsersList: React.FC<any> = () => {
               >
                 <div className="user-card-content">
                   <div className="user-details">
-                    <h3 className="user-name">
+                    <h3 className="heading-6">
                       {user.first_name} {user.last_name}
                     </h3>
-                    <p className="user-email">
-                      <strong>Email:</strong> {user.email}
+                    <p className="body-small">{user.email}</p>
+                    <div className="user-subscription">
+                      <span className={`subscription-badge ${user.subscribed ? 'subscribed' : 'not-subscribed'}`}>
+                        {user.subscribed ? '✓ Subscribed' : '✗ Not Subscribed'}
+                      </span>
+                    </div>
+                    <p className="caption">
+                      Joined: {new Date(user.created_at || '').toLocaleDateString()}
                     </p>
-                  </div>
-                  <div className={`subscription-badge ${user.subscribed ? 'subscribed' : 'not-subscribed'}`}>
-                    {user.subscribed ? 'SUBSCRIBED' : 'NOT SUBSCRIBED'}
                   </div>
                 </div>
               </div>
@@ -169,45 +173,43 @@ const UsersList: React.FC<any> = () => {
               </div>
               
               <div className="pagination-controls">
-                <button
+                <Button
                   onClick={handlePreviousPage}
                   disabled={!usersPagination.hasPreviousPage || isLoadingPage}
                   className="pagination-button pagination-prev"
                 >
                   Previous
-                </button>
+                </Button>
                 
                 <div className="pagination-numbers">
                   {generatePageNumbers().map((page) => (
-                    <button
+                    <Button
                       key={page}
                       onClick={() => handlePageChange(page)}
                       disabled={isLoadingPage}
                       className={`pagination-number ${usersPagination.currentPage === page ? 'active' : ''} ${isLoadingPage ? 'loading' : ''}`}
                     >
                       {page}
-                    </button>
+                    </Button>
                   ))}
                 </div>
                 
-                <button
+                <Button
                   onClick={handleNextPage}
                   disabled={!usersPagination.hasNextPage || isLoadingPage}
                   className="pagination-button pagination-next"
                 >
                   Next
-                </button>
+                </Button>
               </div>
             </div>
           )}
         </>
       )}
 
-      {usersPagination.totalCount > 0 && (
-        <div className="users-count">
-          Total Users: {usersPagination.totalCount}
-        </div>
-      )}
+      <div className="users-count">
+                  <p className="body-small">Total Users: {usersPagination.totalCount}</p>
+      </div>
 
       <AddUserModal
         isOpen={isModalOpen}
