@@ -212,41 +212,67 @@ const DynamicFormField: React.FC<DynamicFormFieldProps> = ({
 
     switch (data_type) {
       case 'text':
+        // Check if this is a content field (not subject, cc, bcc fields)
+        const isContentField = !field.uid.includes('subject') && 
+                              !field.uid.includes('cc') && 
+                              !field.uid.includes('bcc');
+        
         if (field_metadata.rich_text_type === 'advanced' || field_metadata.rich_text_type === 'basic') {
           return (
-            <RichTextEditor
-              value={value.value || ''}
-              onChange={handleRichTextChange}
-              placeholder={placeholder}
-              hasError={!!error}
-              minHeight={field_metadata.multiline ? 150 : 100}
-              maxHeight={400}
-            />
+            <div>
+              <RichTextEditor
+                value={value.value || ''}
+                onChange={handleRichTextChange}
+                placeholder={placeholder}
+                hasError={!!error}
+                minHeight={field_metadata.multiline ? 150 : 100}
+                maxHeight={400}
+              />
+              {isContentField && (
+                <small className="template-variables-helper">
+                  💡 <strong>Template Variables:</strong> You can use <code>{'{{first_name}}'}</code>, <code>{'{{last_name}}'}</code>, <code>{'{{email}}'}</code>, and <code>{'{{file_url}}'}</code> in your content to personalize emails.
+                </small>
+              )}
+            </div>
           );
         }
         
         if (field_metadata.multiline) {
           return (
-            <textarea
+            <div>
+              <textarea
+                value={value.value || ''}
+                onChange={(e) => handleTextChange(e.target.value)}
+                placeholder={placeholder}
+                className={`form-input ${error ? 'error' : ''}`}
+                disabled={disabled}
+                rows={4}
+              />
+              {isContentField && (
+                <small className="template-variables-helper">
+                  💡 <strong>Template Variables:</strong> You can use <code>{'{{first_name}}'}</code>, <code>{'{{last_name}}'}</code>, <code>{'{{email}}'}</code>, and <code>{'{{file_url}}'}</code> in your content to personalize emails.
+                </small>
+              )}
+            </div>
+          );
+        }
+        
+        return (
+          <div>
+            <input
+              type="text"
               value={value.value || ''}
               onChange={(e) => handleTextChange(e.target.value)}
               placeholder={placeholder}
               className={`form-input ${error ? 'error' : ''}`}
               disabled={disabled}
-              rows={4}
             />
-          );
-        }
-        
-        return (
-          <input
-            type="text"
-            value={value.value || ''}
-            onChange={(e) => handleTextChange(e.target.value)}
-            placeholder={placeholder}
-            className={`form-input ${error ? 'error' : ''}`}
-            disabled={disabled}
-          />
+            {isContentField && (
+              <small className="template-variables-helper">
+                💡 <strong>Template Variables:</strong> You can use <code>{'{{first_name}}'}</code>, <code>{'{{last_name}}'}</code>, <code>{'{{email}}'}</code>, and <code>{'{{file_url}}'}</code> in your content to personalize emails.
+              </small>
+            )}
+          </div>
         );
 
       case 'file':

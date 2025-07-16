@@ -20,7 +20,7 @@ import { fetchContentTypeSchema, createCustomContentTypeEntry } from '../../api'
 import { useToast } from '../../contexts/ToastContext';
 
 const SendEmail: React.FC = () => {
-  const { customTemplates, emailUsers } = useSelector((state: RootState) => state.main);
+  const { allCustomTemplates: customTemplates, emailUsers, isLoadingAllCustomTemplates } = useSelector((state: RootState) => state.main);
   const dispatch = useDispatch();
   const { showSuccess, showError } = useToast();
   const [formData, setFormData] = useState<TCustomEmailForm>({
@@ -649,15 +649,21 @@ const SendEmail: React.FC = () => {
               value={formData.selectedContentType}
               onChange={(e) => handleTemplateSelect(e.target.value)}
               className={`form-input template-select ${errors.selectedContentType ? 'error' : ''}`}
+              disabled={isLoadingAllCustomTemplates}
             >
-              <option value="">Choose a custom template...</option>
-              {customTemplates.map((template: any) => (
+              <option value="">
+                {isLoadingAllCustomTemplates ? 'Loading templates...' : 'Choose a custom template...'}
+              </option>
+              {!isLoadingAllCustomTemplates && customTemplates.map((template: any) => (
                 <option key={template.uid} value={template.uid}>
                   {template.title}
                 </option>
               ))}
             </select>
             {errors.selectedContentType && <span className="caption" style={{ color: '#dc3545' }}>{errors.selectedContentType}</span>}
+            {isLoadingAllCustomTemplates && (
+              <p className="body-small">Loading custom templates...</p>
+            )}
             {isLoadingSchema && (
               <p className="body-small">Loading template schema...</p>
             )}

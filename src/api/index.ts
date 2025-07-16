@@ -8,10 +8,13 @@ import {
   setEmailTemplatesData,
   addEmailTemplateData,
   setCustomTemplatesData,
+  setCustomTemplatesPaginationData,
   setEmailUsersData,
   setEmailUsersLoading,
+  setAllCustomTemplatesData,
+  setAllCustomTemplatesLoading,
 } from "../reducer";
-import { TUsersPaginationData } from "../types";
+import { TUsersPaginationData, TCustomTemplatesPaginationData } from "../types";
 import { initializeContentstackSdk, initializeContentstackManagementSdk } from "../sdk/utils";
 import * as Utils from "@contentstack/utils";
 import { TCreateEmailTemplateInput, TCreateCustomTemplateInput } from "../types";
@@ -188,6 +191,67 @@ export const fetchCustomTemplatesData = async (
   } catch (error) {
     console.error("Error fetching custom templates:", error);
     dispatch(setCustomTemplatesData([]));
+  }
+};
+
+// New function with pagination support
+export const fetchCustomTemplatesDataWithPagination = async (
+  dispatch: Dispatch<any>,
+  page: number = 1,
+  limit: number = 6
+): Promise<void> => {
+  try {
+    // Fetch content types with pagination
+    const data = await ManagementStack.contentType().query({
+      query: {
+        uid: {
+          $nin: Object.values(CONTENT_TYPES)
+        }
+      },
+      limit,
+      skip: (page - 1) * limit,
+      include_count: true
+    }).find();
+    
+    const rawTemplates = data?.items || [];
+    const totalCount = data?.count || 0;
+    
+    // Transform ContentType[] to TCustomTemplate[]
+    const customTemplates = rawTemplates.map((template: any) => ({
+      uid: template.uid,
+      title: template.title,
+      description: template.description || '',
+      schema: template.schema || [],
+      created_at: template.created_at,
+      updated_at: template.updated_at,
+    }));
+    
+    const paginationData: TCustomTemplatesPaginationData = {
+      customTemplates,
+      pagination: {
+        currentPage: page,
+        totalPages: Math.ceil(totalCount / limit),
+        totalCount,
+        limit,
+        hasNextPage: page < Math.ceil(totalCount / limit),
+        hasPreviousPage: page > 1,
+      },
+    };
+    
+    dispatch(setCustomTemplatesPaginationData(paginationData));
+  } catch (error) {
+    console.error("Error fetching custom templates with pagination:", error);
+    dispatch(setCustomTemplatesPaginationData({
+      customTemplates: [],
+      pagination: {
+        currentPage: 1,
+        totalPages: 1,
+        totalCount: 0,
+        limit,
+        hasNextPage: false,
+        hasPreviousPage: false,
+      },
+    }));
   }
 };
 
@@ -542,8 +606,9 @@ export const fetchInitialData = async (
       fetchHeaderData(dispatch),
       fetchUsersData(dispatch, 1, 5), // Start with first page, 5 users per page
       fetchEmailTemplateData(dispatch),
-      fetchCustomTemplatesData(dispatch),
+      fetchCustomTemplatesDataWithPagination(dispatch, 1, 6), // Start with first page, 6 templates per page
       fetchUsersForEmail(dispatch),
+      fetchAllCustomTemplates(dispatch)
     ]);
     setLoading(false);
   } catch (error) {
@@ -676,6 +741,50 @@ export const fetchUsersForEmail = async (
   } catch (error) {
     console.error('Error loading email users:', error);
     dispatch(setEmailUsersLoading(false));
+    throw error;
+  }
+};
+
+const searchAllCustomTemplates = async () => {
+  try {
+    // Fetch all content types that are not standard ones (custom templates)
+    const data = await ManagementStack.contentType().query({
+      query: {
+        uid: {
+          $nin: Object.values(CONTENT_TYPES)
+        }
+      }
+    }).find();
+    
+    const rawTemplates = data?.items || [];
+    
+    // Transform ContentType[] to TCustomTemplate[]
+    const customTemplates = rawTemplates.map((template: any) => ({
+      uid: template.uid,
+      title: template.title,
+      description: template.description || '',
+      schema: template.schema || [],
+      created_at: template.created_at,
+      updated_at: template.updated_at,
+    }));
+    
+    return customTemplates;
+  } catch (error) {
+    console.error('Error fetching all custom templates:', error);
+    throw error;
+  }
+};
+
+export const fetchAllCustomTemplates = async (
+  dispatch: Dispatch<any>
+): Promise<void> => {
+  dispatch(setAllCustomTemplatesLoading(true));
+  try {
+    const templates = await searchAllCustomTemplates();
+    dispatch(setAllCustomTemplatesData(templates));
+  } catch (error) {
+    console.error('Error loading all custom templates:', error);
+    dispatch(setAllCustomTemplatesLoading(false));
     throw error;
   }
 };
