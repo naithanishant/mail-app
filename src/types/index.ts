@@ -33,6 +33,18 @@ export type TUsersPaginationData = {
   };
 };
 
+export type TCustomTemplatesPaginationData = {
+  customTemplates: TCustomTemplate[];
+  pagination: {
+    currentPage: number;
+    totalPages: number;
+    totalCount: number;
+    limit: number;
+    hasNextPage: boolean;
+    hasPreviousPage: boolean;
+  };
+};
+
 export type TSchemaField = {
   id: string;
   type: 'text' | 'textarea' | 'rich_text' | 'boolean' | 'file' | 'select' | 'reference';

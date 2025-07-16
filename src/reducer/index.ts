@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { THeaderData, TUsersData, TEmailTemplateData, TUsersPaginationData } from "../types";
+import { THeaderData, TUsersData, TEmailTemplateData, TUsersPaginationData, TCustomTemplatesPaginationData, TCustomTemplate } from "../types";
 
 interface AppState {
   headerData: THeaderData;
@@ -14,8 +14,18 @@ interface AppState {
   };
   emailTemplates: TEmailTemplateData[];
   customTemplates: any;
+  customTemplatesPagination: {
+    currentPage: number;
+    totalPages: number;
+    totalCount: number;
+    limit: number;
+    hasNextPage: boolean;
+    hasPreviousPage: boolean;
+  };
   emailUsers: TUsersData[];
   isLoadingEmailUsers: boolean;
+  allCustomTemplates: TCustomTemplate[];
+  isLoadingAllCustomTemplates: boolean;
 }
 
 const initialState: AppState = {
@@ -44,8 +54,18 @@ const initialState: AppState = {
   },
   emailTemplates: [],
   customTemplates: [],
+  customTemplatesPagination: {
+    currentPage: 1,
+    totalPages: 1,
+    totalCount: 0,
+    limit: 6,
+    hasNextPage: false,
+    hasPreviousPage: false,
+  },
   emailUsers: [],
-  isLoadingEmailUsers: false
+  isLoadingEmailUsers: false,
+  allCustomTemplates: [],
+  isLoadingAllCustomTemplates: false
 };
 
 const mainSlice = createSlice({
@@ -79,12 +99,23 @@ const mainSlice = createSlice({
     setCustomTemplatesData: (state, action: PayloadAction<any>) => {
       state.customTemplates = action.payload;
     },
+    setCustomTemplatesPaginationData: (state, action: PayloadAction<TCustomTemplatesPaginationData>) => {
+      state.customTemplates = action.payload.customTemplates;
+      state.customTemplatesPagination = action.payload.pagination;
+    },
     setEmailUsersData: (state, action: PayloadAction<TUsersData[]>) => {
       state.emailUsers = action.payload;
       state.isLoadingEmailUsers = false;
     },
     setEmailUsersLoading: (state, action: PayloadAction<boolean>) => {
       state.isLoadingEmailUsers = action.payload;
+    },
+    setAllCustomTemplatesData: (state, action: PayloadAction<TCustomTemplate[]>) => {
+      state.allCustomTemplates = action.payload;
+      state.isLoadingAllCustomTemplates = false;
+    },
+    setAllCustomTemplatesLoading: (state, action: PayloadAction<boolean>) => {
+      state.isLoadingAllCustomTemplates = action.payload;
     },
   },
 });
@@ -97,8 +128,11 @@ export const {
   setEmailTemplatesData,
   addEmailTemplateData,
   setCustomTemplatesData,
+  setCustomTemplatesPaginationData,
   setEmailUsersData,
   setEmailUsersLoading,
+  setAllCustomTemplatesData,
+  setAllCustomTemplatesLoading,
 } = mainSlice.actions;
 
 export default mainSlice.reducer;

@@ -647,6 +647,32 @@
   margin: 0;
 }
 
+/* Template Variables Helper Text */
+.template-variables-helper {
+  display: block;
+  margin-top: 0.5rem;
+  padding: 0.75rem;
+  background-color: #f8f9fa;
+  border-left: 4px solid #007bff;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  color: #495057;
+  line-height: 1.4;
+}
+
+.template-variables-helper code {
+  background-color: #e9ecef;
+  padding: 0.15rem 0.3rem;
+  border-radius: 3px;
+  font-family: 'Monaco', 'Consolas', 'Courier New', monospace;
+  font-size: 0.85em;
+  color: #6f42c1;
+}
+
+.template-variables-helper strong {
+  color: #007bff;
+}
+
 /* Responsive Design for Nested Fields */
 @media (max-width: 768px) {
   .group-field-container {
@@ -663,5 +689,10 @@
   
   .nested-field .form-input {
     font-size: 0.9rem;
+  }
+  
+  .template-variables-helper {
+    font-size: 0.75rem;
+    padding: 0.5rem;
   }
 } 
