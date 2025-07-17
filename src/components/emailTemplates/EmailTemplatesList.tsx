@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '@contentstack/venus-components';
+import { useNavigate } from 'react-router-dom';
 import '../../styles/EmailTemplatesList.css';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../../store';
@@ -20,10 +21,9 @@ interface CustomTemplate {
 const EmailTemplatesList: React.FC<any> = () => {
   const { customTemplates, customTemplatesPagination } = useSelector((state: RootState) => state.main);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { showSuccess, showError } = useToast();
   const [isDragDropModalOpen, setIsDragDropModalOpen] = useState(false);
-  const [isViewModalOpen, setIsViewModalOpen] = useState(false);
-  const [selectedTemplate, setSelectedTemplate] = useState<CustomTemplate | null>(null);
   const [isLoadingPage, setIsLoadingPage] = useState(false);
 
   // Fetch custom templates on component mount
@@ -40,13 +40,7 @@ const EmailTemplatesList: React.FC<any> = () => {
   };
 
   const handleViewTemplate = (template: CustomTemplate) => {
-    setSelectedTemplate(template);
-    setIsViewModalOpen(true);
-  };
-
-  const handleCloseViewModal = () => {
-    setIsViewModalOpen(false);
-    setSelectedTemplate(null);
+    navigate(`/templates/${template.uid}/preview`);
   };
 
   // Handle custom drag-drop template creation
@@ -251,44 +245,6 @@ const EmailTemplatesList: React.FC<any> = () => {
         onClose={handleCloseDragDropModal}
         onSaveTemplate={handleDragDropTemplate}
       />
-      
-      {selectedTemplate && (
-        <div className="template-view-modal">
-          <div className="template-view-content">
-            <div className="template-view-header">
-              <h2>{selectedTemplate.title}</h2>
-              <Button 
-                onClick={handleCloseViewModal}
-                className="close-button"
-                buttonType="tertiary"
-              >
-                ×
-              </Button>
-            </div>
-            <div className="template-view-body">
-              <p><strong>Description:</strong> {selectedTemplate.description || 'No description'}</p>
-              <p><strong>UID:</strong> {selectedTemplate.uid}</p>
-              <div className="template-schema">
-                <h4>Template Fields ({getFieldCount(selectedTemplate.schema)}):</h4>
-                {selectedTemplate.schema && selectedTemplate.schema.length > 0 ? (
-                  <ul className="schema-list">
-                    {selectedTemplate.schema.map((field: any, index: number) => (
-                      <li key={`field-${index}`} className="schema-item">
-                        <strong>{field.display_name}</strong> ({field.data_type})
-                        {field.field_metadata?.description && (
-                          <span className="field-description"> - {field.field_metadata.description}</span>
-                        )}
-                      </li>
-                    ))}
-                  </ul>
-                ) : (
-                  <p>No fields defined for this template.</p>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };
