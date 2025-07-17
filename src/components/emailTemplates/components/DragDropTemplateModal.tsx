@@ -39,7 +39,7 @@ interface SectionLibraryItem {
 }
 
 const BODY_SECTIONS: SectionLibraryItem[] = [
-  { id: 'text', type: 'text', name: 'Text', description: 'Add text content', icon: '📝' },
+  { id: 'text', type: 'text', name: 'Text', description: 'Add text content (multiple supported)', icon: '📝' },
   { id: 'image', type: 'image', name: 'Image', description: 'Select image from Contentstack assets', icon: '🖼️' },
   { id: 'file', type: 'file', name: 'File', description: 'Select file from Contentstack assets', icon: '📎' },
   // { id: 'background', type: 'background', name: 'Background', description: 'Set background color or image', icon: '🎨' },
@@ -69,6 +69,29 @@ const DragDropTemplateModal: React.FC<DragDropTemplateModalProps> = ({
         sections: [defaultTextSection]
       },
       defaultSectionId: defaultTextSection.id
+    };
+  };
+
+  // Helper function to generate schema field names for text sections
+  const generateTextFieldName = (textSections: any[], currentSection: any) => {
+    const index = textSections.findIndex((s: any) => s.id === currentSection.id) + 1;
+    return `text_${index}`;
+  };
+
+  // Helper function to prepare template data with schema field information
+  const prepareTemplateData = (template: any) => {
+    const textSections = template.sections.filter((s: any) => s.type === 'text');
+    const isMultipleTextSections = textSections.length > 1;
+    
+    return {
+      ...template,
+      hasMultipleTextSections: isMultipleTextSections,
+      textSectionFields: isMultipleTextSections ? 
+        textSections.map((section: any, index: number) => ({
+          id: section.id,
+          fieldName: `text_${index + 1}`,
+          order: section.order
+        })) : []
     };
   };
 
@@ -122,11 +145,14 @@ const DragDropTemplateModal: React.FC<DragDropTemplateModalProps> = ({
   };
 
   const handleDragStart = (e: React.DragEvent, sectionType: TSectionType) => {
-    // Check if CC, BCC, or Link already exists in template
-    if ((sectionType === 'cc' || sectionType === 'bcc') && 
+    // Check if CC, BCC, Image, File, or Link already exists in template
+    if ((sectionType === 'cc' || sectionType === 'bcc' || sectionType === 'image' || sectionType === 'file' || sectionType === 'link') && 
         template.sections.some((section: any) => section.type === sectionType)) {
       e.preventDefault();
-      const sectionName = sectionType.toUpperCase();
+      const sectionName = sectionType === 'image' ? 'Image' : 
+                          sectionType === 'file' ? 'File' :
+                          sectionType === 'link' ? 'Link' :
+                          sectionType.toUpperCase();
       setError('sections', `${sectionName} section already exists. Only one ${sectionName} section is allowed per template.`);
       return;
     }
@@ -146,12 +172,15 @@ const DragDropTemplateModal: React.FC<DragDropTemplateModalProps> = ({
     
     if (!draggedSectionType) return;
 
-    // Additional check to prevent dropping CC/BCC/Link if they already exist
-    if ((draggedSectionType === 'cc' || draggedSectionType === 'bcc') && 
+    // Additional check to prevent dropping CC/BCC/Image/File/Link if they already exist
+    if ((draggedSectionType === 'cc' || draggedSectionType === 'bcc' || draggedSectionType === 'image' || draggedSectionType === 'file' || draggedSectionType === 'link') && 
         template.sections.some((section: any) => section.type === draggedSectionType)) {
       setDraggedSectionType(null);
       setIsDragging(false);
-      const sectionName = draggedSectionType.toUpperCase();
+      const sectionName = draggedSectionType === 'image' ? 'Image' : 
+                          draggedSectionType === 'file' ? 'File' :
+                          draggedSectionType === 'link' ? 'Link' :
+                          draggedSectionType.toUpperCase();
       setError('sections', `${sectionName} section already exists. Only one ${sectionName} section is allowed per template.`);
       return;
     }
@@ -191,7 +220,7 @@ const DragDropTemplateModal: React.FC<DragDropTemplateModalProps> = ({
       sections: prev.sections.filter((section: any) => section.id !== sectionId)
     }));
     setSelectedSectionId(null);
-    // Note: This will automatically re-enable CC/BCC sections in the library
+    // Note: This will automatically re-enable CC/BCC/Image/File/Link sections in the library
     // when they are deleted from the template
   };
 
@@ -286,14 +315,15 @@ const DragDropTemplateModal: React.FC<DragDropTemplateModalProps> = ({
     }
     
     try {
-      // Prepare template data with drag-drop structure
+      // Prepare template data with drag-drop structure and schema field information
+      const preparedTemplate = prepareTemplateData(template);
       const templateData: TCreateCustomTemplateInput = {
         template_name: template.template_name.trim(),
         template_body: "", // Will be generated from sections
         active: true,
         isDragDropTemplate: true,
         dragDropData: {
-          ...template,
+          ...preparedTemplate,
           // Ensure template name is included in dragDropData
           template_name: template.template_name.trim()
         }
@@ -318,14 +348,15 @@ const DragDropTemplateModal: React.FC<DragDropTemplateModalProps> = ({
     try {
       setIsCreating(true);
       
-      // Prepare template data with drag-drop structure (same format as handleSave)
+      // Prepare template data with drag-drop structure and schema field information (same format as handleSave)
+      const preparedTemplate = prepareTemplateData(template);
       const templateData: TCreateCustomTemplateInput = {
         template_name: template.template_name.trim(),
         template_body: "", // Will be generated from sections
         active: true,
         isDragDropTemplate: true,
         dragDropData: {
-          ...template,
+          ...preparedTemplate,
           // Ensure template name is included in dragDropData
           template_name: template.template_name.trim()
         }
@@ -334,8 +365,8 @@ const DragDropTemplateModal: React.FC<DragDropTemplateModalProps> = ({
       onSaveTemplate(templateData);
       onClose();
     } catch (error) {
-      console.error("Error creating content type:", error);
-      showError(`Failed to create content type: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      console.error("Error creating email template:", error);
+      showError(`Failed to create email template: ${error instanceof Error ? error.message : 'Unknown error'}`);
     } finally {
       setIsCreating(false);
     }
@@ -395,14 +426,29 @@ const DragDropTemplateModal: React.FC<DragDropTemplateModalProps> = ({
   const renderSectionContent = (section: any) => {
     switch (section.type) {
       case 'text':
+        const textSections = template.sections.filter((s: any) => s.type === 'text');
+        const isMultipleTextSections = textSections.length > 1;
+        const textSectionIndex = textSections.findIndex((s: any) => s.id === section.id) + 1;
+        
         return (
           <div className="text-preview">
             <div className="section-label">
-              <strong>📝 Text Section</strong>
+              <strong>📝 {isMultipleTextSections ? `Text Field ${textSectionIndex}` : 'Text Section'}</strong>
+              {isMultipleTextSections && (
+                <span className="schema-field-badge">Schema Field</span>
+              )}
             </div>
             <div className="section-placeholder">
-              [Text content will be configured here]
+              {isMultipleTextSections 
+                ? `[Schema field "text_${textSectionIndex}" will be configured here]`
+                : '[Text content will be configured here]'
+              }
             </div>
+            {isMultipleTextSections && (
+              <div className="schema-field-info">
+                <small>📋 This will create a schema field for dynamic content</small>
+              </div>
+            )}
           </div>
         );
       
@@ -493,10 +539,31 @@ const DragDropTemplateModal: React.FC<DragDropTemplateModalProps> = ({
         {/* Separator */}
         <div className="properties-separator"></div>
         
-        {/* Simple schema creation message */}
+        {/* Schema creation message with text section info */}
         <div className="template-settings-section">
           <h3>Schema Creation</h3>
           <p className="settings-hint">Add sections to create the email template schema. Section properties will be configured later.</p>
+          
+          {/* Show text section grouping info */}
+          {(() => {
+            const textSections = template.sections.filter((s: any) => s.type === 'text');
+            if (textSections.length > 1) {
+              return (
+                <div className="schema-info-box">
+                  <strong>📝 Text Sections ({textSections.length})</strong>
+                  <p>Multiple text sections will create separate schema fields:</p>
+                  <ul>
+                    {textSections.map((section: any, index: number) => (
+                      <li key={section.id}>
+                        <code>text_{index + 1}</code> - Text Field {index + 1}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              );
+            }
+            return null;
+          })()}
         </div>
       </div>
     );
@@ -524,20 +591,26 @@ const DragDropTemplateModal: React.FC<DragDropTemplateModalProps> = ({
             <div className="section-category">
               <h3>Body</h3>
               <div className="section-items">
-                {BODY_SECTIONS.map(item => (
-                  <div
-                    key={item.id}
-                    className="section-item"
-                    draggable
-                    onDragStart={(e) => handleDragStart(e, item.type)}
-                  >
-                    <span className="section-icon">{item.icon}</span>
-                    <div className="section-info">
-                      <div className="section-name">{item.name}</div>
-                      <div className="section-description">{item.description}</div>
+                {BODY_SECTIONS.map(item => {
+                  const isAlreadyAdded = (item.type === 'image' || item.type === 'file' || item.type === 'link') && 
+                    template.sections.some((section: any) => section.type === item.type);
+                  
+                  return (
+                    <div
+                      key={item.id}
+                      className={`section-item ${isAlreadyAdded ? 'disabled' : ''}`}
+                      draggable={!isAlreadyAdded}
+                      onDragStart={(e) => handleDragStart(e, item.type)}
+                      title={isAlreadyAdded ? `${item.name} already added - only one per template` : `Drag to add ${item.name}`}
+                    >
+                      <span className="section-icon">{item.icon}</span>
+                      <div className="section-info">
+                        <div className="section-name">{item.name}</div>
+                        <div className="section-description">{item.description}</div>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
             
@@ -545,7 +618,7 @@ const DragDropTemplateModal: React.FC<DragDropTemplateModalProps> = ({
               <h3>Miscellaneous</h3>
               <div className="section-items">
                 {MISCELLANEOUS_SECTIONS.map(item => {
-                  const isAlreadyAdded = (item.type === 'cc' || item.type === 'bcc' || item.type === 'link') && 
+                  const isAlreadyAdded = (item.type === 'cc' || item.type === 'bcc') && 
                     template.sections.some((section: any) => section.type === item.type);
                   
                   return (
@@ -584,6 +657,7 @@ const DragDropTemplateModal: React.FC<DragDropTemplateModalProps> = ({
               {template.sections.length === 0 ? (
                 <div className="empty-canvas">
                   <p>Drag sections from the library to start building your template</p>
+                  <p className="empty-canvas-hint">💡 You can add multiple text sections to create schema fields</p>
                 </div>
               ) : (
                 template.sections
@@ -603,7 +677,7 @@ const DragDropTemplateModal: React.FC<DragDropTemplateModalProps> = ({
                 Cancel
              </Button>
              <Button className="content-type-btn" onClick={handleCreateContentTypeOnly} disabled={isCreating || !isFormValid()} buttonType="primary">
-                {isCreating ? 'Creating...' : 'Create Content Type Only'}
+                {isCreating ? 'Creating...' : 'Create Email Template'}
              </Button>
           </div>
         </div>

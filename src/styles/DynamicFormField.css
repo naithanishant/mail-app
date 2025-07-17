@@ -26,7 +26,7 @@
 
 /* File Upload Styles */
 .file-upload-container {
-  border: 2px dashed #ddd;
+  border: 2px dashed #3822aa;
   border-radius: 8px;
   padding: 1rem;
   text-align: center;
@@ -34,7 +34,7 @@
 }
 
 .file-upload-container:hover {
-  border-color: #007bff;
+  border-color: #3822aa;
 }
 
 .file-input-wrapper {
@@ -42,7 +42,7 @@
 }
 
 .file-upload-btn {
-  background-color: #007bff;
+  background-color: #3822aa;
   color: white;
   border: none;
   padding: 0.75rem 1.5rem;
@@ -70,7 +70,7 @@
 .progress-bar {
   width: 100%;
   height: 8px;
-  background-color: #f0f0f0;
+  background-color: #3822aa;
   border-radius: 4px;
   overflow: hidden;
   margin-bottom: 0.5rem;
@@ -78,7 +78,7 @@
 
 .progress-fill {
   height: 100%;
-  background-color: #007bff;
+  background-color: #3822aa;
   transition: width 0.3s ease;
 }
 
@@ -93,7 +93,7 @@
   padding: 1rem;
   background-color: #f8f9fa;
   border-radius: 8px;
-  border: 1px solid #e9ecef;
+  border: 1px solid #3822aa;
 }
 
 .asset-preview {
@@ -215,7 +215,7 @@
   text-align: center;
   background-color: #f8f9fa;
   border-radius: 8px;
-  border: 1px solid #e9ecef;
+  border: 1px solid #3822aa;
 }
 
 .disabled-message {
@@ -286,7 +286,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 1rem 1.5rem;
-  border-bottom: 1px solid #e9ecef;
+  border-bottom: 1px solid #3822aa;
 }
 
 .asset-modal-header h3 {
@@ -311,13 +311,13 @@
 
 .asset-modal-search {
   padding: 1rem 1.5rem;
-  border-bottom: 1px solid #e9ecef;
+  border-bottom: 1px solid #3822aa;
 }
 
 .asset-modal-search input {
   width: 100%;
   padding: 0.5rem;
-  border: 1px solid #ddd;
+  border: 1px solid #3822aa;
   border-radius: 4px;
   font-size: 0.9rem;
 }
@@ -346,7 +346,7 @@
 }
 
 .asset-grid-item {
-  border: 1px solid #e9ecef;
+  border: 1px solid #3822aa;
   border-radius: 8px;
   overflow: hidden;
   cursor: pointer;
@@ -355,7 +355,7 @@
 }
 
 .asset-grid-item:hover {
-  border-color: #007bff;
+  border-color: #3822aa;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   transform: translateY(-2px);
 }
@@ -452,7 +452,7 @@
 }
 
 .select-asset-btn {
-  background-color: #007bff;
+  background-color: #3822aa;
   color: white;
   border: none;
   padding: 0.75rem 1.5rem;
@@ -518,7 +518,7 @@
 }
 
 .group-header-content {
-  border-bottom: 2px solid #e9ecef;
+  border-bottom: 2px solid #3822aa;
   padding-bottom: 8px;
 }
 
@@ -563,7 +563,7 @@
   background-color: white;
   padding: 12px;
   border-radius: 6px;
-  border: 1px solid #dee2e6;
+  border: 1px solid #3822aa;
 }
 
 .group-field-container .form-group {
@@ -595,7 +595,7 @@
 
 .nested-field {
   background-color: #ffffff;
-  border: 1px solid #dee2e6;
+  border: 1px solid #3822aa;
   border-radius: 6px;
   padding: 0.75rem;
   position: relative;
@@ -608,7 +608,7 @@
   top: 0;
   bottom: 0;
   width: 3px;
-  background-color: #007bff;
+  background-color: #3822aa;
   border-radius: 3px 0 0 3px;
 }
 
@@ -620,14 +620,14 @@
 }
 
 .nested-field .form-input {
-  border: 1px solid #ced4da;
+  border: 1px solid #3822aa;
   border-radius: 4px;
   padding: 0.5rem;
   font-size: 0.85rem;
 }
 
 .nested-field .form-input:focus {
-  border-color: #007bff;
+  border-color: #3822aa;
   box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
 }
 
@@ -653,7 +653,7 @@
   margin-top: 0.5rem;
   padding: 0.75rem;
   background-color: #f8f9fa;
-  border-left: 4px solid #007bff;
+  border-left: 4px solid #3822aa;
   border-radius: 4px;
   font-size: 0.8rem;
   color: #495057;
@@ -661,7 +661,6 @@
 }
 
 .template-variables-helper code {
-  background-color: #e9ecef;
   padding: 0.15rem 0.3rem;
   border-radius: 3px;
   font-family: 'Monaco', 'Consolas', 'Courier New', monospace;
@@ -670,7 +669,7 @@
 }
 
 .template-variables-helper strong {
-  color: #007bff;
+  color: #3822aa;
 }
 
 /* Responsive Design for Nested Fields */

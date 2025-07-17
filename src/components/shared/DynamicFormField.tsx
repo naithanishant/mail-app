@@ -230,7 +230,7 @@ const DynamicFormField: React.FC<DynamicFormFieldProps> = ({
               />
               {isContentField && (
                 <small className="template-variables-helper">
-                  💡 <strong>Template Variables:</strong> You can use <code>{'{{first_name}}'}</code>, <code>{'{{last_name}}'}</code>, <code>{'{{email}}'}</code>, and <code>{'{{file_url}}'}</code> in your content to personalize emails.
+                  💡 <strong>Template Variables:</strong> You can use <code>{'{{first_name}}'}</code>, <code>{'{{last_name}}'}</code>, <code>{'{{image_url}}'}</code>, and <code>{'{{file_url}}'}</code> in your content to personalize emails.
                 </small>
               )}
             </div>
@@ -250,7 +250,7 @@ const DynamicFormField: React.FC<DynamicFormFieldProps> = ({
               />
               {isContentField && (
                 <small className="template-variables-helper">
-                  💡 <strong>Template Variables:</strong> You can use <code>{'{{first_name}}'}</code>, <code>{'{{last_name}}'}</code>, <code>{'{{email}}'}</code>, and <code>{'{{file_url}}'}</code> in your content to personalize emails.
+                  💡 <strong>Template Variables:</strong> You can use <code>{'{{first_name}}'}</code>, <code>{'{{last_name}}'}</code>, <code>{'{{image_url}}'}</code>, and <code>{'{{file_url}}'}</code> in your content to personalize emails.
                 </small>
               )}
             </div>

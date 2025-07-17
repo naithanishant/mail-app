@@ -18,7 +18,7 @@
   padding: 60px 20px;
   background-color: #f8f9fa;
   border-radius: 8px;
-  border: 2px dashed #dee2e6;
+  border: 2px dashed #3822aa;
 }
 
 .no-users-title {
@@ -40,7 +40,7 @@
 
 .user-card {
   background-color: white;
-  border: 1px solid #dee2e6;
+  border: 1px solid #3822aa;
   border-radius: 8px;
   padding: 20px;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
@@ -144,7 +144,7 @@
   width: 12px;
   height: 12px;
   margin: -6px 0 0 -6px;
-  border: 2px solid #007bff;
+  border: 2px solid #3822aa;
   border-radius: 50%;
   border-top-color: transparent;
   animation: spin 1s linear infinite;
@@ -163,7 +163,7 @@
 
 .loading-spinner {
   border-radius: 50%;
-  border-top-color: #007bff;
+  border-top-color: #3822aa;
   animation: spin 1s linear infinite;
 }
 

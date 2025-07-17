@@ -497,6 +497,7 @@ export const createContentType = async (schema: any): Promise<any> => {
       ManagementStack.contentType().create(contentTypePayload)
         .then(result => {
           resolve(result);
+
         })
         .catch(error => {
           console.error("Error creating content type:", error);
