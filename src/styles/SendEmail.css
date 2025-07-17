@@ -12,7 +12,7 @@
 .send-email-header {
   text-align: center;
   margin-bottom: 32px;
-  border-bottom: 2px solid #f0f0f0;
+  border-bottom: 2px solid #3822aa;
   padding-bottom: 24px;
 }
 
@@ -159,7 +159,7 @@
   padding: 12px 16px;
   cursor: pointer;
   transition: background-color 0.3s ease;
-  border-bottom: 1px solid #f0f0f0;
+  border-bottom: 1px solid #3822aa;
 }
 
 .user-dropdown-item:last-child {
@@ -294,7 +294,7 @@
   display: flex;
   justify-content: center;
   padding-top: 24px;
-  border-top: 2px solid #f0f0f0;
+  border-top: 2px solid #3822aa;
 }
 
 
