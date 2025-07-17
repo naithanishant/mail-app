@@ -8,6 +8,7 @@ import { NotFound } from "../components/NotFound";
 import SendEmail from "../components/sendEmail/SendEmail";
 import UsersList from "../components/usersList/UsersList";
 import EmailTemplatesList from "../components/emailTemplates/EmailTemplatesList";
+import EmailContentPreview from "../components/emailTemplates/EmailContentPreview";
 
 const AppRoutes: React.FC = () => {
   const dispatch = useDispatch();
@@ -31,6 +32,7 @@ const AppRoutes: React.FC = () => {
                 <Route path="/send-mail" element={<SendEmail />} />
                 <Route path="/users" element={<UsersList />} />
                 <Route path="/templates" element={<EmailTemplatesList />} />
+                <Route path="/templates/:uid/preview" element={<EmailContentPreview />} />
                 <Route path="/mail-history" element={<div>THIS IS MAIL HISTORY PAGE</div>} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
