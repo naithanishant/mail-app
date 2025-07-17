@@ -136,7 +136,7 @@ const EmailTemplatesList: React.FC<any> = () => {
             onClick={handleOpenDragDropModal}
             className="add-custom-template-button"
           >
-            🎨 Create Custom Template
+            Create Custom Template
           </Button>
         </div>
       </div>
@@ -150,7 +150,7 @@ const EmailTemplatesList: React.FC<any> = () => {
               onClick={handleOpenDragDropModal}
               className="add-first-custom-template-button"
             >
-              🎨 Create Custom Template
+              Create Custom Template
             </Button>
           </div>
         </div>
