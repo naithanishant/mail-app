@@ -119,7 +119,7 @@ const UsersList: React.FC<any> = () => {
           onClick={handleOpenModal}
           className="add-user-button"
         >
-          ➕ Add User
+          Add User
         </Button>
       </div>
 
@@ -131,7 +131,7 @@ const UsersList: React.FC<any> = () => {
             onClick={handleOpenModal}
             className="add-first-user-button"
           >
-            ➕ Add First User
+            Add First User
           </Button>
         </div>
       ) : (
